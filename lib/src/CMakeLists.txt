@@ -1,6 +1,7 @@
 include_directories(${CServer_SOURCE_DIR}/lib/include)
 
 add_library(web_server_lib SHARED
+    tcp_server.c
     content.c
     file_mapper.c
     handler.c

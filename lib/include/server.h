@@ -18,4 +18,10 @@
 #define SOCKET int
 #define GETSOCKETERRNO() (errno)
 
+typedef struct {
+    int (*listen)(char*);
+} Server;
+
+Server* new_tcp_server();
+
 #endif
