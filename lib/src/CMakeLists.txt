@@ -2,7 +2,8 @@ include_directories(${CServer_SOURCE_DIR}/lib/include)
 
 add_library(web_server_lib SHARED
     content.c
-    handle.c
+    file_mapper.c
+    handler.c
     manager.c
     responses.c
     socket.c

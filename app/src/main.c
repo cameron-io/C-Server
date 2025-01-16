@@ -1,10 +1,7 @@
-#include "server.h"
-#include "content.h"
 #include "socket.h"
 #include "core.h"
-#include "handle.h"
 #include "manager.h"
-#include "responses.h"
+#include "handler.h"
 
 int main() {
     SOCKET server = create_socket(0, "8080");

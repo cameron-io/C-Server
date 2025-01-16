@@ -1,5 +1,5 @@
-#ifndef WEB_HANDLE_H
-#define WEB_HANDLE_H
+#ifndef WEB_HANDLER_H
+#define WEB_HANDLER_H
 
 #include "server.h"
 #include "core.h"
