@@ -1,4 +1,7 @@
-#include "core.h"
+#include <sys/types.h>
+#include <stdio.h>
+#include <string.h>
+#include "conn_core.h"
 #include "conn_manager.h"
 #include "req_handler.h"
 #include "req_content.h"

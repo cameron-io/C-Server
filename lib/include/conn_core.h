@@ -1,7 +1,14 @@
 #ifndef WEB_CORE_H
 #define WEB_CORE_H
 
-#include "server.h"
+#include <netdb.h>
+#include <unistd.h>
+#include <errno.h>
+
+#define ISVALIDSOCKET(s) ((s) >= 0)
+#define CLOSESOCKET(s) close(s)
+#define SOCKET int
+#define GETSOCKETERRNO() (errno)
 
 #define MAX_REQUEST_SIZE 2047
 

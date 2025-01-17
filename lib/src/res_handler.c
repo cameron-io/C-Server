@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include "res_handler.h"
 #include "req_content.h"
 #include "conn_manager.h"

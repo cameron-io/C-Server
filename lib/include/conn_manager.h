@@ -1,8 +1,7 @@
 #ifndef WEB_MANAGER_H
 #define WEB_MANAGER_H
 
-#include "server.h"
-#include "core.h"
+#include "conn_core.h"
 
 struct client_info *get_client(struct client_info **client_list,
         SOCKET s);

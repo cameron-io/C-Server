@@ -1,7 +1,7 @@
 #ifndef WEB_RESPONSES_H
 #define WEB_RESPONSES_H
 
-#include "core.h"
+#include "conn_core.h"
 
 void serve_resource(
     struct client_info **client_list,
