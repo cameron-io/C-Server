@@ -13,17 +13,18 @@
 #include "conn_manager.h"
 #include "req_handler.h"
 
-int tcp_listener(char* port);
-SOCKET new_tcp_socket(const char* host, const char *port);
+int tcp_listener(SOCKET server);
+SOCKET new_tcp_socket(const char *port);
 
-Server* new_tcp_server() {
+Server* new_tcp_server(char* port) {
     Server* app = (Server*) malloc(sizeof(Server));
+    SOCKET tcp_socket = new_tcp_socket(port);
     app->listen = tcp_listener;
+    app->socket = tcp_socket;
     return app;
 }
 
-int tcp_listener(char* port) {
-    SOCKET server = new_tcp_socket(0, port);
+int tcp_listener(SOCKET server) {
     struct client_info *client_list = 0;
 
     while(1) {
@@ -55,15 +56,9 @@ int tcp_listener(char* port) {
             handle_clients(&client_list, &reads);
         }
     } //while(1)
-
-    printf("\nClosing socket...\n");
-    CLOSESOCKET(server);
-
-    printf("Finished.\n");
-    return 0;
 }
 
-SOCKET new_tcp_socket(const char* host, const char *port) {
+SOCKET new_tcp_socket(const char *port) {
     /*
         Configure local address
     */
@@ -74,7 +69,7 @@ SOCKET new_tcp_socket(const char* host, const char *port) {
     hints.ai_flags = AI_PASSIVE;
 
     struct addrinfo *bind_address;
-    getaddrinfo(host, port, &hints, &bind_address);
+    getaddrinfo(0, port, &hints, &bind_address);
 
     /*
         Create socket
@@ -101,7 +96,7 @@ SOCKET new_tcp_socket(const char* host, const char *port) {
     /*
         Listen
     */
-    printf("TCP Server listening on port: %s...\n", port);
+    printf("Listening on port: %s...\n", port);
     if (listen(socket_listen, 10) < 0) {
         fprintf(stderr, "listen() failed. (%d)\n", errno);
         exit(1);

@@ -21,6 +21,7 @@ void handle_clients(struct client_info **client_list, fd_set* reads) {
         struct client_info *next = client->next;
 
         if (FD_ISSET(client->socket, reads)) {
+            printf("%s\n", client->request);
 
             if (MAX_REQUEST_SIZE == client->received) {
                 send_400(client_list, client);
