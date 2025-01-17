@@ -4,7 +4,8 @@
 #include "conn_core.h"
 
 typedef struct {
-    int (*listen)(SOCKET);
+    int (*listen)();
+    void (*stop)();
     SOCKET socket;
 } Server;
 

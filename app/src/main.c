@@ -8,10 +8,7 @@ Server* app;
 
 void signal_handler(int sig) {
     if (sig == SIGINT) {
-        printf("\nClosing socket...\n");
-        CLOSESOCKET(app->socket);
-
-        printf("Finished.\n");
+        app->stop();
         exit(0);
     }
 }
@@ -19,5 +16,5 @@ void signal_handler(int sig) {
 int main() {
     signal(SIGINT, signal_handler);
     app = new_tcp_server("8080");
-    app->listen(app->socket);
+    app->listen();
 }

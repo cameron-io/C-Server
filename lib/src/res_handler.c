@@ -10,8 +10,6 @@ void serve_resource(
     const char *path,
     const char *base_path
 ) {
-    printf("GET\t%s\t%s\n", get_client_address(client), path);
-
     if (strcmp(path, "/") == 0) path = "/index.html";
 
     if (strlen(path) > 100) {

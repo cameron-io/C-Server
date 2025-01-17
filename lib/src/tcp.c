@@ -13,18 +13,20 @@
 #include "conn_manager.h"
 #include "req_handler.h"
 
-int tcp_listener(SOCKET server);
+SOCKET server;
 SOCKET new_tcp_socket(const char *port);
+int start_tcp_listener();
+void stop_tcp_listener();
 
 Server* new_tcp_server(char* port) {
     Server* app = (Server*) malloc(sizeof(Server));
-    SOCKET tcp_socket = new_tcp_socket(port);
-    app->listen = tcp_listener;
-    app->socket = tcp_socket;
+    server = new_tcp_socket(port);
+    app->listen = start_tcp_listener;
+    app->stop = stop_tcp_listener;
     return app;
 }
 
-int tcp_listener(SOCKET server) {
+int start_tcp_listener() {
     struct client_info *client_list = 0;
 
     while(1) {
@@ -103,4 +105,12 @@ SOCKET new_tcp_socket(const char *port) {
     }
 
     return socket_listen;
+}
+
+void stop_tcp_listener() {
+    printf("\nClosing socket...");
+    while(CLOSESOCKET(server) == -1) {
+        printf(".");
+    };
+    printf("Finished!\n");
 }

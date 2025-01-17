@@ -67,5 +67,6 @@ void handle_request(
             *end_path = 0;
             serve_resource(client_list, client, path, base_path);
         }
+        printf("GET\t%s\t%s\n", get_client_address(client), path);
     }
 }
