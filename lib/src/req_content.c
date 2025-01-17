@@ -1,4 +1,5 @@
-#include "content.h"
+#include "req_content.h"
+#include <string.h>
 
 const char *get_content_type(const char* path) {
     const char *last_dot = strrchr(path, '.');

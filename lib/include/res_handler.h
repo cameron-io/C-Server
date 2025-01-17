@@ -3,6 +3,13 @@
 
 #include "core.h"
 
+void serve_resource(
+    struct client_info **client_list,
+    struct client_info *client,
+    const char *path,
+    const char *base_path
+);
+
 void send_400(struct client_info **client_list,
         struct client_info *client);
 

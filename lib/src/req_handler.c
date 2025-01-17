@@ -1,9 +1,8 @@
-#include "handler.h"
 #include "core.h"
-#include "manager.h"
-#include "responses.h"
-#include "content.h"
-#include "file_mapper.h"
+#include "conn_manager.h"
+#include "req_handler.h"
+#include "req_content.h"
+#include "res_handler.h"
 
 const char* base_path = "static";
 

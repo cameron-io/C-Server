@@ -1,4 +1,4 @@
-#include "manager.h"
+#include "conn_manager.h"
 
 struct client_info *get_client(struct client_info **client_list,
         SOCKET s) {
