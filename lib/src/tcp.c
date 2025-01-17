@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,7 +14,7 @@
 #include "req_handler.h"
 
 int tcp_listener(char* port);
-SOCKET create_tcp_socket(const char* host, const char *port);
+SOCKET new_tcp_socket(const char* host, const char *port);
 
 Server* new_tcp_server() {
     Server* app = (Server*) malloc(sizeof(Server));
@@ -22,29 +23,36 @@ Server* new_tcp_server() {
 }
 
 int tcp_listener(char* port) {
-    SOCKET server = create_tcp_socket(0, port);
+    SOCKET server = new_tcp_socket(0, port);
     struct client_info *client_list = 0;
 
     while(1) {
         fd_set reads;
+        /*
+            Sets server SOCKET as FD
+        */
         reads = wait_on_clients(&client_list, server);
 
+        /*
+            Check if these reads from select() are for Server SOCKET FD
+        */
         if (FD_ISSET(server, &reads)) {
             struct client_info *client = get_client(&client_list, -1);
 
+            /*
+                Client SOCKET is set by accept()
+            */
             client->socket = accept(server,
                     (struct sockaddr*) &(client->address),
                     &(client->address_length));
 
             if (!ISVALIDSOCKET(client->socket)) {
-                fprintf(stderr, "accept() failed. (%d)\n",
-                        GETSOCKETERRNO());
+                fprintf(stderr, "accept() failed. (%d)\n", errno);
                 return 1;
             }
 
-            printf("New connection from %s.\n",
-                    get_client_address(client));
-            handle_requests(client_list, &reads);
+            printf("New connection: %s\n", get_client_address(client));
+            handle_clients(&client_list, &reads);
         }
     } //while(1)
 
@@ -55,8 +63,10 @@ int tcp_listener(char* port) {
     return 0;
 }
 
-SOCKET create_tcp_socket(const char* host, const char *port) {
-    printf("Configuring local address...\n");
+SOCKET new_tcp_socket(const char* host, const char *port) {
+    /*
+        Configure local address
+    */
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
@@ -66,26 +76,34 @@ SOCKET create_tcp_socket(const char* host, const char *port) {
     struct addrinfo *bind_address;
     getaddrinfo(host, port, &hints, &bind_address);
 
-    printf("Creating socket...\n");
+    /*
+        Create socket
+    */
     SOCKET socket_listen;
     socket_listen = socket(bind_address->ai_family,
             bind_address->ai_socktype, bind_address->ai_protocol);
     if (!ISVALIDSOCKET(socket_listen)) {
-        fprintf(stderr, "socket() failed. (%d)\n", GETSOCKETERRNO());
+        fprintf(stderr, "socket() failed. (%d)\n", errno);
         exit(1);
     }
 
-    printf("Binding socket to local address...\n");
+    /*
+        Bind socket
+    */
     if (bind(socket_listen,
-                bind_address->ai_addr, bind_address->ai_addrlen)) {
-        fprintf(stderr, "bind() failed. (%d)\n", GETSOCKETERRNO());
+            bind_address->ai_addr,
+            bind_address->ai_addrlen)) {
+        fprintf(stderr, "bind() failed. (%d)\n", errno);
         exit(1);
     }
     freeaddrinfo(bind_address);
 
-    printf("Listening...\n");
+    /*
+        Listen
+    */
+    printf("TCP Server listening on port: %s...\n", port);
     if (listen(socket_listen, 10) < 0) {
-        fprintf(stderr, "listen() failed. (%d)\n", GETSOCKETERRNO());
+        fprintf(stderr, "listen() failed. (%d)\n", errno);
         exit(1);
     }
 

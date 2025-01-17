@@ -9,8 +9,13 @@
 
 const char* base_path = "static";
 
-void handle_requests(struct client_info *client_list, fd_set* reads) {
-    struct client_info *client = client_list;
+void handle_request(
+    struct client_info **client_list,
+    struct client_info *client
+);
+
+void handle_clients(struct client_info **client_list, fd_set* reads) {
+    struct client_info *client = *client_list;
 
     while(client) {
         struct client_info *next = client->next;
@@ -18,7 +23,7 @@ void handle_requests(struct client_info *client_list, fd_set* reads) {
         if (FD_ISSET(client->socket, reads)) {
 
             if (MAX_REQUEST_SIZE == client->received) {
-                send_400(&client_list, client);
+                send_400(client_list, client);
                 client = next;
                 continue;
             }
@@ -28,9 +33,8 @@ void handle_requests(struct client_info *client_list, fd_set* reads) {
                     MAX_REQUEST_SIZE - client->received, 0);
 
             if (r < 1) {
-                printf("Unexpected disconnect from %s.\n",
-                        get_client_address(client));
-                drop_client(&client_list, client);
+                printf("Unexpected disconnect from %s.\n", get_client_address(client));
+                drop_client(client_list, client);
                 client = next;
                 continue;
             }
@@ -40,21 +44,27 @@ void handle_requests(struct client_info *client_list, fd_set* reads) {
             char *q = strstr(client->request, "\r\n\r\n");
             if (q) {
                 *q = 0;
-
-                if (strncmp("GET /", client->request, 5)) {
-                    send_400(&client_list, client);
-                } else {
-                    char *path = client->request + 4;
-                    char *end_path = strstr(path, " ");
-                    if (!end_path) {
-                        send_400(&client_list, client);
-                    } else {
-                        *end_path = 0;
-                        serve_resource(&client_list, client, path, base_path);
-                    }
-                }
+                handle_request(client_list, client);
             } //if (q)
         }
         client = next;
+    }
+}
+
+void handle_request(
+    struct client_info **client_list,
+    struct client_info *client
+) {
+    if (strncmp("GET /", client->request, 5)) {
+        send_400(client_list, client);
+    } else {
+        char *path = client->request + 4;
+        char *end_path = strstr(path, " ");
+        if (!end_path) {
+            send_400(client_list, client);
+        } else {
+            *end_path = 0;
+            serve_resource(client_list, client, path, base_path);
+        }
     }
 }

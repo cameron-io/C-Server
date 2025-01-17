@@ -1,6 +1,7 @@
+#include <sys/socket.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/socket.h>
 #include "conn_manager.h"
 
 struct client_info *get_client(struct client_info **client_list,
@@ -71,7 +72,7 @@ fd_set wait_on_clients(struct client_info **client_list, SOCKET server) {
     }
 
     if (select(max_socket+1, &reads, 0, 0, 0) < 0) {
-        fprintf(stderr, "select() failed. (%d)\n", GETSOCKETERRNO());
+        fprintf(stderr, "select() failed. (%d)\n", errno);
         exit(1);
     }
 

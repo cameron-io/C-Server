@@ -3,6 +3,6 @@
 
 #include "conn_core.h"
 
-void handle_requests(struct client_info *client_list, fd_set* reads);
+void handle_clients(struct client_info **client_list, fd_set* reads);
 
 #endif
