@@ -7,13 +7,13 @@
 
 void ResponseHandler::sendHeaders(
     int clientFd,
-    const char *statusCode,
-    const char *contentType,
+    std::string statusCode,
+    std::string contentType,
     unsigned int contentLength)
 {
     char buffer[BSIZE];
 
-    sprintf(buffer, "HTTP/1.1 %s\r\n", statusCode);
+    sprintf(buffer, "HTTP/1.1 %s\r\n", statusCode.c_str());
     write(clientFd, buffer, strlen(buffer));
 
     // Default CORS-Headers
@@ -31,7 +31,7 @@ void ResponseHandler::sendHeaders(
     sprintf(buffer, "Content-Length: %u\r\n", contentLength);
     write(clientFd, buffer, strlen(buffer));
 
-    sprintf(buffer, "Content-Type: %s\r\n", contentType);
+    sprintf(buffer, "Content-Type: %s\r\n", contentType.c_str());
     write(clientFd, buffer, strlen(buffer));
 
     sprintf(buffer, "Connection: close\r\n");
@@ -43,11 +43,11 @@ void ResponseHandler::sendHeaders(
 
 void ResponseHandler::sendOk(
     int clientFd,
-    const char *contentType,
-    const char *data)
+    std::string contentType,
+    std::string data)
 {
-    sendHeaders(clientFd, "200 OK", contentType, strlen(data));
-    write(clientFd, data, strlen(data));
+    sendHeaders(clientFd, "200 OK", contentType, data.length());
+    write(clientFd, data.c_str(), data.length());
 }
 
 void ResponseHandler::sendNoContent(int clientFd)
@@ -57,24 +57,24 @@ void ResponseHandler::sendNoContent(int clientFd)
 
 void ResponseHandler::sendBadRequest(
     int clientFd,
-    const char *data)
+    std::string data)
 {
-    sendHeaders(clientFd, "400 Bad Request", "text/plain", strlen(data));
-    write(clientFd, data, strlen(data));
+    sendHeaders(clientFd, "400 Bad Request", "text/plain", data.length());
+    write(clientFd, data.c_str(), data.length());
 }
 
 void ResponseHandler::sendNotFound(
     int clientFd,
-    const char *data)
+    std::string data)
 {
-    sendHeaders(clientFd, "404 Not Found", "text/plain", strlen(data));
-    write(clientFd, data, strlen(data));
+    sendHeaders(clientFd, "404 Not Found", "text/plain", data.length());
+    write(clientFd, data.c_str(), data.length());
 }
 
 void ResponseHandler::sendFile(
     int clientFd,
     FILE *fp,
-    const char *contentType,
+    std::string contentType,
     size_t contentLength)
 {
     sendHeaders(clientFd, "200 OK", contentType, contentLength);
