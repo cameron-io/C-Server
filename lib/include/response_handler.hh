@@ -15,6 +15,9 @@ public:
         FILE *fp,
         const char *contentType,
         size_t contentLength);
+
+private:
+    static void sendHeaders(int clientFd, const char *statusCode, const char *contentType, unsigned int contentLength);
 };
 
 #endif
