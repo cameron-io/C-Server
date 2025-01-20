@@ -18,12 +18,8 @@ public:
     EventManager(std::shared_ptr<HttpServer> httpServer)
         : server(httpServer)
     {
-        int epollFd = epoll_create1(0);
-        if (epollFd == -1)
-        {
-            throw std::runtime_error("Failed to create epoll instance.");
-        }
-        this->epollFd = epollFd;
+        this->epollFd = setupInstance();
+        addEventStream();
     }
 
     ~EventManager()
@@ -31,8 +27,11 @@ public:
         close(epollFd);
     }
 
-    void addEventStream();
     void startEventLoop();
+
+private:
+    int setupInstance();
+    void addEventStream();
 };
 
 #endif

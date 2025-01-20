@@ -10,9 +10,6 @@ int main()
     // Create epoll instance
     std::unique_ptr<EventManager> epoll = std::make_unique<EventManager>(httpServer);
 
-    // Add server socket to epoll
-    epoll->addEventStream();
-
     std::cout << "Listening on port: " << PORT << std::endl;
     epoll->startEventLoop();
 

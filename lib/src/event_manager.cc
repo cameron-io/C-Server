@@ -6,13 +6,23 @@
 #include "http_server.hh"
 #include "http_client.hh"
 
+int EventManager::setupInstance()
+{
+    int epollFd = epoll_create1(0);
+    if (epollFd == -1)
+    {
+        throw std::runtime_error("Failed to create epoll instance.");
+    }
+    return epollFd;
+}
+
 void EventManager::addEventStream()
 {
     event.events = EPOLLIN;
     event.data.fd = server->serverFd;
     if (epoll_ctl(this->epollFd, EPOLL_CTL_ADD, server->serverFd, &event) == -1)
     {
-        throw std::runtime_error("Failed to create epoll instance.");
+        throw std::runtime_error("Failed to add server to epoll instance.");
     }
 }
 
