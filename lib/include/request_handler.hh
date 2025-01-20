@@ -10,8 +10,7 @@ private:
     static void send404(int clientFd);
     static void serveResource(
         int clientFd,
-        const char *path,
-        const char *base_path);
+        const char *path);
 };
 
 #endif

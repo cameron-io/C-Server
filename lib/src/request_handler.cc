@@ -3,7 +3,7 @@
 #include <string.h>
 #include "request_handler.hh"
 
-constexpr char* base_path = "static";
+#define BASE_PATH "static"
 
 void RequestHandler::handle(int clientFd, char* request) {
     if (strncmp("GET /", request, 5)) {
@@ -15,7 +15,7 @@ void RequestHandler::handle(int clientFd, char* request) {
             send400(clientFd);
         } else {
             *end_path = 0;
-            serveResource(clientFd, path, base_path);
+            serveResource(clientFd, path);
         }
     }
 }
@@ -76,8 +76,7 @@ void RequestHandler::send404(int clientFd)
 
 void RequestHandler::serveResource(
     int clientFd,
-    const char *path,
-    const char *base_path)
+    const char *path)
 {
     if (strcmp(path, "/") == 0)
         path = "/index.html";
@@ -95,7 +94,7 @@ void RequestHandler::serveResource(
     }
 
     char full_path[128];
-    sprintf(full_path, "%s%s", base_path, path);
+    sprintf(full_path, "%s%s", BASE_PATH, path);
 
     FILE *fp = fopen(full_path, "rb");
 
