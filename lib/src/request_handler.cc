@@ -10,7 +10,7 @@ void RequestHandler::handle(int clientFd, char *request)
 {
     if (strncmp("GET /", request, 5))
     {
-        ResponseHandler::send400(clientFd);
+        ResponseHandler::sendBadRequest(clientFd);
     }
     else
     {
@@ -18,7 +18,7 @@ void RequestHandler::handle(int clientFd, char *request)
         char *end_path = strstr(path, " ");
         if (!end_path)
         {
-            ResponseHandler::send400(clientFd);
+            ResponseHandler::sendBadRequest(clientFd);
         }
         else
         {
@@ -38,13 +38,13 @@ void RequestHandler::serveResource(
 
     if (strlen(path) > 100)
     {
-        ResponseHandler::send400(clientFd);
+        ResponseHandler::sendBadRequest(clientFd);
         return;
     }
 
     if (strstr(path, ".."))
     {
-        ResponseHandler::send404(clientFd);
+        ResponseHandler::sendNotFound(clientFd);
         return;
     }
 
@@ -54,7 +54,7 @@ void RequestHandler::serveResource(
     FILE *fp = fopen(full_path, "rb");
     if (!fp)
     {
-        ResponseHandler::send404(clientFd);
+        ResponseHandler::sendNotFound(clientFd);
         return;
     }
 
