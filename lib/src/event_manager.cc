@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <thread>
 #include <iostream>
+#include <memory>
 #include "event_manager.hh"
 #include "http_server.hh"
 #include "http_client.hh"
@@ -39,10 +40,11 @@ void EventManager::startEventLoop()
 
         for (int i = 0; i < numEvents; ++i)
         {
+            int clientFd;
             if (events[i].data.fd == server->serverFd)
             {
                 // Accept new client connection
-                int clientFd = server->acceptConnection();
+                clientFd = server->acceptConnection();
                 if (clientFd == -1)
                 {
                     std::cerr << "Failed to accept client connection." << std::endl;
@@ -58,22 +60,21 @@ void EventManager::startEventLoop()
                     close(clientFd);
                     continue;
                 }
-
-                // Create a new thread to handle the client connection
-                Client *cl = new Client(clientFd);
-                std::thread clientThread([&cl]()
-                                         { cl->handleClient(); });
-                clientThread.detach();
             }
             else
             {
                 // Handle client data
-                int clientFd = events[i].data.fd;
-                Client *cl = new Client(clientFd);
-                std::thread clientThread([&cl]()
-                                         { cl->handleClient(); });
-                clientThread.detach();
+                clientFd = events[i].data.fd;
             }
+
+            // Create a new thread to handle the client connection
+            std::thread clientThread(
+                [clientFd]()
+                {
+                    std::unique_ptr<Client> cl = std::make_unique<Client>(clientFd);
+                    cl->handleClient();
+                });
+            clientThread.detach();
         }
     }
 }
