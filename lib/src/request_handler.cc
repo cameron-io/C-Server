@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "request_handler.hh"
+#include "response_handler.hh"
 
 #define BASE_PATH "static"
 
@@ -9,7 +10,7 @@ void RequestHandler::handle(int clientFd, char *request)
 {
     if (strncmp("GET /", request, 5))
     {
-        send400(clientFd);
+        ResponseHandler::send400(clientFd);
     }
     else
     {
@@ -17,30 +18,15 @@ void RequestHandler::handle(int clientFd, char *request)
         char *end_path = strstr(path, " ");
         if (!end_path)
         {
-            send400(clientFd);
+            ResponseHandler::send400(clientFd);
         }
         else
         {
+            // null terminate path
             *end_path = 0;
             serveResource(clientFd, path);
         }
     }
-}
-
-void RequestHandler::send400(int clientFd)
-{
-    const char *c400 = "HTTP/1.1 400 Bad Request\r\n"
-                       "Connection: close\r\n"
-                       "Content-Length: 11\r\n\r\nBad Request";
-    write(clientFd, c400, strlen(c400));
-}
-
-void RequestHandler::send404(int clientFd)
-{
-    const char *c404 = "HTTP/1.1 404 Not Found\r\n"
-                       "Connection: close\r\n"
-                       "Content-Length: 9\r\n\r\nNot Found";
-    write(clientFd, c404, strlen(c404));
 }
 
 void RequestHandler::serveResource(
@@ -52,13 +38,13 @@ void RequestHandler::serveResource(
 
     if (strlen(path) > 100)
     {
-        send400(clientFd);
+        ResponseHandler::send400(clientFd);
         return;
     }
 
     if (strstr(path, ".."))
     {
-        send404(clientFd);
+        ResponseHandler::send404(clientFd);
         return;
     }
 
@@ -66,43 +52,20 @@ void RequestHandler::serveResource(
     sprintf(full_path, "%s%s", BASE_PATH, path);
 
     FILE *fp = fopen(full_path, "rb");
-
     if (!fp)
     {
-        send404(clientFd);
+        ResponseHandler::send404(clientFd);
         return;
     }
 
+    // Read File Contents
     fseek(fp, 0L, SEEK_END);
-    size_t cl = ftell(fp);
+    size_t contentLength = ftell(fp);
     rewind(fp);
 
-    const char *ct = getContentType(full_path);
-
-#define BSIZE 1024
-    char buffer[BSIZE];
-
-    sprintf(buffer, "HTTP/1.1 200 OK\r\n");
-    write(clientFd, buffer, strlen(buffer));
-
-    sprintf(buffer, "Connection: close\r\n");
-    write(clientFd, buffer, strlen(buffer));
-
-    sprintf(buffer, "Content-Length: %u\r\n", (unsigned int)cl);
-    write(clientFd, buffer, strlen(buffer));
-
-    sprintf(buffer, "Content-Type: %s\r\n", ct);
-    write(clientFd, buffer, strlen(buffer));
-
-    sprintf(buffer, "\r\n");
-    write(clientFd, buffer, strlen(buffer));
-
-    int r = fread(buffer, 1, BSIZE, fp);
-    while (r)
-    {
-        write(clientFd, buffer, r);
-        r = fread(buffer, 1, BSIZE, fp);
-    }
+    // Send File Contents
+    const char *contentType = getContentType(full_path);
+    ResponseHandler::sendFile(clientFd, fp, contentType, contentLength);
 
     fclose(fp);
 }

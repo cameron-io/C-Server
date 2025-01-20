@@ -38,7 +38,7 @@ down:
 
 .PHONY: time_request
 time_request: $(CURL_FORMAT_CFG)
-	curl -w "@$(CURL_FORMAT_CFG)" -o /dev/null -s http://localhost:$(PORT)/hello.json
+	curl -w "@$(CURL_FORMAT_CFG)" -o /dev/null -s http://localhost:$(PORT)/
 
 .PHONY: teardown
 teardown: down

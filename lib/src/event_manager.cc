@@ -1,4 +1,3 @@
-#include <sys/epoll.h>
 #include <stdexcept>
 #include <thread>
 #include <iostream>

@@ -8,8 +8,6 @@ public:
 
 private:
     static const char *getContentType(const char *path);
-    static void send400(int clientFd);
-    static void send404(int clientFd);
     static void serveResource(
         int clientFd,
         const char *path);
