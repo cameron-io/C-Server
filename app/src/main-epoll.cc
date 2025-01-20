@@ -12,44 +12,55 @@ constexpr int MAX_EVENTS = 10;
 constexpr int MAX_CLIENTS = 10;
 constexpr int PORT = 8080;
 
-void writeResponse(int clientFd, char * output_buffer, char * output_data, int output_data_len) {
-    sprintf(output_buffer, "HTTP/1.1 200 OK\r\n");
-    write(clientFd, output_buffer, strlen(output_buffer));
-
-    sprintf(output_buffer, "Connection: close\r\n");
-    write(clientFd, output_buffer, strlen(output_buffer));
-
-    sprintf(output_buffer, "Content-Length: %u\r\n", output_data_len);
-    write(clientFd, output_buffer, strlen(output_buffer));
-
-    sprintf(output_buffer, "Content-Type: %s\r\n", "text/plain");
-    write(clientFd, output_buffer, strlen(output_buffer));
-
-    sprintf(output_buffer, "\r\n");
-    write(clientFd, output_buffer, strlen(output_buffer));
-
-    sprintf(output_buffer, output_data);
-    write(clientFd, output_buffer, strlen(output_buffer));
-}
-
-// Function to handle client connections in a separate thread
-void handleClient(int clientFd) {
-    char input_buffer[1024];
-    char output_buffer[1024];
-
-    while (true) {
-        int bytesRead = read(clientFd, input_buffer, sizeof(input_buffer));
-        if (bytesRead <= 0) {
-            break;
-        }
-
-        char * output_data = "Hello World!";
-        int output_data_len = strlen(output_data);
-        writeResponse(clientFd, output_buffer, output_data, output_data_len);
+class Client {
+public:
+    Client (int clientFd) {
+        this->clientFd = clientFd;
     }
 
-    close(clientFd);
-}
+    void writeResponse(char * data, int data_len)
+    {
+        char buffer[1024];
+
+        sprintf(buffer, "HTTP/1.1 200 OK\r\n");
+        write(clientFd, buffer, strlen(buffer));
+
+        sprintf(buffer, "Connection: close\r\n");
+        write(clientFd, buffer, strlen(buffer));
+
+        sprintf(buffer, "Content-Length: %u\r\n", data_len);
+        write(clientFd, buffer, strlen(buffer));
+
+        sprintf(buffer, "Content-Type: %s\r\n", "text/plain");
+        write(clientFd, buffer, strlen(buffer));
+
+        sprintf(buffer, "\r\n");
+        write(clientFd, buffer, strlen(buffer));
+
+        sprintf(buffer, data);
+        write(clientFd, buffer, strlen(buffer));
+    }
+
+    // Function to handle client connections in a separate thread
+    void handleClient()
+    {
+        char input_buffer[1024];
+
+        while (true) {
+            int bytesRead = read(clientFd, input_buffer, sizeof(input_buffer));
+            if (bytesRead <= 0) {
+                break;
+            }
+            char * output_data = "Hello World!";
+            int output_data_len = strlen(output_data);
+            writeResponse(output_data, output_data_len);
+        }
+
+        close(clientFd);
+    }
+private:
+    int clientFd;
+};
 
 class Server {
 public:
@@ -147,12 +158,14 @@ int main() {
                 }
 
                 // Create a new thread to handle the client connection
-                std::thread clientThread(handleClient, clientFd);
+                Client* cl = new Client(clientFd);
+                std::thread clientThread([&cl]() { cl->handleClient(); });
                 clientThread.detach();
             } else {
                 // Handle client data
                 int clientFd = events[i].data.fd;
-                std::thread clientThread(handleClient, clientFd);
+                Client* cl = new Client(clientFd);
+                std::thread clientThread([&cl]() { cl->handleClient(); });
                 clientThread.detach();
             }
         }
