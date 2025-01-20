@@ -2,7 +2,6 @@
 #define EVENT_MANAGER_H
 
 #include <sys/epoll.h>
-#include <stdexcept>
 #include <memory>
 #include "http_server.hh"
 

@@ -9,7 +9,12 @@ class Client
 {
 public:
     Client(int clientFd);
-    ~Client() { close(clientFd); }
+
+    ~Client()
+    {
+        close(clientFd);
+    }
+
     void handleClient();
 
 private:
