@@ -13,7 +13,7 @@ compile: $(SOURCE_DIR)
 
 .PHONY: run
 run: compile
-	$(BIN_PATH)/Release/bin/$(APP)
+	$(BIN_PATH)/Release/bin/$(APP) $(ARGS)
 
 .PHONY: test
 test: compile
