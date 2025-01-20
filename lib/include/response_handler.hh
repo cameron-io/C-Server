@@ -15,7 +15,7 @@ public:
 
     static void sendBadRequest(int clientFd, const char *data);
 
-    static void sendNotFound(int clientFd);
+    static void sendNotFound(int clientFd, const char *data);
 
     static void sendFile(
         int clientFd,

@@ -63,9 +63,10 @@ void ResponseHandler::sendBadRequest(
     write(clientFd, data, strlen(data));
 }
 
-void ResponseHandler::sendNotFound(int clientFd)
+void ResponseHandler::sendNotFound(
+    int clientFd,
+    const char *data)
 {
-    const char *data = "Not Found";
     sendHeaders(clientFd, "404 Not Found", "text/plain", strlen(data));
     write(clientFd, data, strlen(data));
 }

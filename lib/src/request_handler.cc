@@ -80,7 +80,7 @@ void RequestHandler::serveResource(int clientFd, std::string path)
     FILE *fp = fopen(fullPath, "rb");
     if (!fp)
     {
-        ResponseHandler::sendNotFound(clientFd);
+        ResponseHandler::sendNotFound(clientFd, "Could not locate resource.");
         return;
     }
 
