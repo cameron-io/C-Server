@@ -29,18 +29,28 @@ void ResponseHandler::sendHeaders(
     write(clientFd, buffer, strlen(buffer));
 }
 
-void ResponseHandler::sendBadRequest(int clientFd)
+void ResponseHandler::sendOK(
+    int clientFd,
+    const char *contentType,
+    const char *data)
 {
-    const char *buffer = "Bad Request";
-    sendHeaders(clientFd, "400 Bad Request", "text/plain", strlen(buffer));
-    write(clientFd, buffer, strlen(buffer));
+    sendHeaders(clientFd, "200 OK", contentType, strlen(data));
+    write(clientFd, data, strlen(data));
+}
+
+void ResponseHandler::sendBadRequest(
+    int clientFd,
+    const char *data)
+{
+    sendHeaders(clientFd, "400 Bad Request", "text/plain", strlen(data));
+    write(clientFd, data, strlen(data));
 }
 
 void ResponseHandler::sendNotFound(int clientFd)
 {
-    const char *buffer = "Not Found";
-    sendHeaders(clientFd, "404 Not Found", "text/plain", strlen(buffer));
-    write(clientFd, buffer, strlen(buffer));
+    const char *data = "Not Found";
+    sendHeaders(clientFd, "404 Not Found", "text/plain", strlen(data));
+    write(clientFd, data, strlen(data));
 }
 
 void ResponseHandler::sendFile(

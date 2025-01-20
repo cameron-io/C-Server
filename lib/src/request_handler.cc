@@ -10,7 +10,7 @@ void RequestHandler::handle(int clientFd, char *request)
 {
     if (strncmp("GET /", request, 5))
     {
-        ResponseHandler::sendBadRequest(clientFd);
+        ResponseHandler::sendBadRequest(clientFd, "Unsupported Request.");
     }
     else
     {
@@ -18,7 +18,7 @@ void RequestHandler::handle(int clientFd, char *request)
         char *end_path = strstr(path, " ");
         if (!end_path)
         {
-            ResponseHandler::sendBadRequest(clientFd);
+            ResponseHandler::sendBadRequest(clientFd, "Invalid path.");
         }
         else
         {
@@ -38,7 +38,7 @@ void RequestHandler::serveResource(
 
     if (strlen(path) > 100)
     {
-        ResponseHandler::sendBadRequest(clientFd);
+        ResponseHandler::sendBadRequest(clientFd, "Path size too large.");
         return;
     }
 

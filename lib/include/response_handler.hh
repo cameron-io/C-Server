@@ -6,7 +6,12 @@
 class ResponseHandler
 {
 public:
-    static void sendBadRequest(int clientFd);
+    static void sendOK(
+        int clientFd,
+        const char *contentType,
+        const char *data);
+
+    static void sendBadRequest(int clientFd, const char *data);
 
     static void sendNotFound(int clientFd);
 
