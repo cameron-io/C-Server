@@ -3,10 +3,12 @@
 
 #include "request_handler.hh"
 
-class Client {
+class Client
+{
 public:
-    Client (int clientFd);
+    Client(int clientFd);
     void handleClient();
+
 private:
     int clientFd;
 };

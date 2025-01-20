@@ -5,57 +5,26 @@
 
 #define BASE_PATH "static"
 
-void RequestHandler::handle(int clientFd, char* request) {
-    if (strncmp("GET /", request, 5)) {
+void RequestHandler::handle(int clientFd, char *request)
+{
+    if (strncmp("GET /", request, 5))
+    {
         send400(clientFd);
-    } else {
+    }
+    else
+    {
         char *path = request + 4;
         char *end_path = strstr(path, " ");
-        if (!end_path) {
+        if (!end_path)
+        {
             send400(clientFd);
-        } else {
+        }
+        else
+        {
             *end_path = 0;
             serveResource(clientFd, path);
         }
     }
-}
-
-const char *RequestHandler::get_content_type(const char *path)
-{
-    const char *last_dot = strrchr(path, '.');
-    if (last_dot)
-    {
-        if (strcmp(last_dot, ".css") == 0)
-            return "text/css";
-        if (strcmp(last_dot, ".csv") == 0)
-            return "text/csv";
-        if (strcmp(last_dot, ".gif") == 0)
-            return "image/gif";
-        if (strcmp(last_dot, ".htm") == 0)
-            return "text/html";
-        if (strcmp(last_dot, ".html") == 0)
-            return "text/html";
-        if (strcmp(last_dot, ".ico") == 0)
-            return "image/x-icon";
-        if (strcmp(last_dot, ".jpeg") == 0)
-            return "image/jpeg";
-        if (strcmp(last_dot, ".jpg") == 0)
-            return "image/jpeg";
-        if (strcmp(last_dot, ".js") == 0)
-            return "application/javascript";
-        if (strcmp(last_dot, ".json") == 0)
-            return "application/json";
-        if (strcmp(last_dot, ".png") == 0)
-            return "image/png";
-        if (strcmp(last_dot, ".pdf") == 0)
-            return "application/pdf";
-        if (strcmp(last_dot, ".svg") == 0)
-            return "image/svg+xml";
-        if (strcmp(last_dot, ".txt") == 0)
-            return "text/plain";
-    }
-
-    return "application/octet-stream";
 }
 
 void RequestHandler::send400(int clientFd)
@@ -108,7 +77,7 @@ void RequestHandler::serveResource(
     size_t cl = ftell(fp);
     rewind(fp);
 
-    const char *ct = get_content_type(full_path);
+    const char *ct = getContentType(full_path);
 
 #define BSIZE 1024
     char buffer[BSIZE];
@@ -136,4 +105,42 @@ void RequestHandler::serveResource(
     }
 
     fclose(fp);
+}
+
+const char *RequestHandler::getContentType(const char *path)
+{
+    const char *last_dot = strrchr(path, '.');
+    if (last_dot)
+    {
+        if (strcmp(last_dot, ".css") == 0)
+            return "text/css";
+        if (strcmp(last_dot, ".csv") == 0)
+            return "text/csv";
+        if (strcmp(last_dot, ".gif") == 0)
+            return "image/gif";
+        if (strcmp(last_dot, ".htm") == 0)
+            return "text/html";
+        if (strcmp(last_dot, ".html") == 0)
+            return "text/html";
+        if (strcmp(last_dot, ".ico") == 0)
+            return "image/x-icon";
+        if (strcmp(last_dot, ".jpeg") == 0)
+            return "image/jpeg";
+        if (strcmp(last_dot, ".jpg") == 0)
+            return "image/jpeg";
+        if (strcmp(last_dot, ".js") == 0)
+            return "application/javascript";
+        if (strcmp(last_dot, ".json") == 0)
+            return "application/json";
+        if (strcmp(last_dot, ".png") == 0)
+            return "image/png";
+        if (strcmp(last_dot, ".pdf") == 0)
+            return "application/pdf";
+        if (strcmp(last_dot, ".svg") == 0)
+            return "image/svg+xml";
+        if (strcmp(last_dot, ".txt") == 0)
+            return "text/plain";
+    }
+
+    return "application/octet-stream";
 }

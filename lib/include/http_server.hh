@@ -4,7 +4,8 @@
 constexpr int MAX_CLIENTS = 10;
 constexpr int PORT = 8080;
 
-class HttpServer {
+class HttpServer
+{
 public:
     HttpServer() {}
 
@@ -12,6 +13,7 @@ public:
     void bindSocket();
     void listenSocket();
     int acceptConnection();
+
 private:
     int serverFd;
 };
