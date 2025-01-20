@@ -6,7 +6,9 @@
 class ResponseHandler
 {
 public:
-    static void sendOK(
+    static void sendNoContent(int clientFd);
+
+    static void sendOk(
         int clientFd,
         const char *contentType,
         const char *data);

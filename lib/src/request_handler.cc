@@ -1,55 +1,82 @@
 #include <iostream>
 #include <unistd.h>
+#include <string>
 #include <string.h>
 #include "request_handler.hh"
 #include "response_handler.hh"
 
 #define BASE_PATH "static"
 
+std::string RequestHandler::parseMethod(std::string r)
+{
+    std::string method;
+    if (r.substr(0, 3) == "GET")
+        method = "GET";
+    else if (r.substr(0, 3) == "PUT")
+        method = "PUT";
+    else if (r.substr(0, 4) == "POST")
+        method = "POST";
+    else if (r.substr(0, 6) == "DELETE")
+        method = "DELETE";
+    else if (r.substr(0, 7) == "OPTIONS")
+        method = "OPTIONS";
+    return method;
+}
+
 void RequestHandler::handle(int clientFd, char *request)
 {
-    if (strncmp("GET /", request, 5))
+    std::string method = parseMethod(request);
+
+    if (method == "GET")
     {
-        ResponseHandler::sendBadRequest(clientFd, "Unsupported Request.");
-    }
-    else
-    {
-        char *path = request + 4;
-        char *end_path = strstr(path, " ");
-        if (!end_path)
+        std::string r = request;
+        std::string path = r.substr(4, r.length() - 4);
+        size_t endIndex = path.find(" ");
+        if (endIndex == std::string::npos)
         {
             ResponseHandler::sendBadRequest(clientFd, "Invalid path.");
         }
         else
         {
             // null terminate path
-            *end_path = 0;
-            serveResource(clientFd, path);
+            path[endIndex] = 0;
+            serveResource(clientFd, path.c_str());
         }
+    }
+    else if (method == "POST")
+    {
+        ResponseHandler::sendNoContent(clientFd);
+    }
+    else if (method == "OPTIONS")
+    {
+        // Handle CORS pre-flight
+        ResponseHandler::sendNoContent(clientFd);
+    }
+    else
+    {
+        ResponseHandler::sendBadRequest(clientFd, "Unsupported Request.");
     }
 }
 
-void RequestHandler::serveResource(
-    int clientFd,
-    const char *path)
+void RequestHandler::serveResource(int clientFd, std::string path)
 {
-    if (strcmp(path, "/") == 0)
+    if (path == "/")
         path = "/index.html";
 
-    if (strlen(path) > 100)
+    if (path.length() > 100)
     {
         ResponseHandler::sendBadRequest(clientFd, "Path size too large.");
         return;
     }
 
-    if (strstr(path, ".."))
+    if (path.find("..") != std::string::npos)
     {
-        ResponseHandler::sendNotFound(clientFd);
+        ResponseHandler::sendBadRequest(clientFd, "Path navigation not permitted.");
         return;
     }
 
     char full_path[128];
-    sprintf(full_path, "%s%s", BASE_PATH, path);
+    sprintf(full_path, "%s%s", BASE_PATH, path.c_str());
 
     FILE *fp = fopen(full_path, "rb");
     if (!fp)
