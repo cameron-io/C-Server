@@ -17,9 +17,9 @@ void ResponseHandler::sendHeaders(
     write(clientFd, buffer, strlen(buffer));
 
     // Default CORS-Headers
-    sprintf(buffer, "Access-Control-Allow-Origin: https://studio.apollographql.com\r\n");
+    sprintf(buffer, "Access-Control-Allow-Origin: *\r\n");
     write(clientFd, buffer, strlen(buffer));
-    sprintf(buffer, "Access-Control-Allow-Methods: GET, OPTIONS\r\n");
+    sprintf(buffer, "Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS\r\n");
     write(clientFd, buffer, strlen(buffer));
     sprintf(buffer, "Access-Control-Allow-Headers: *\r\n");
     write(clientFd, buffer, strlen(buffer));
