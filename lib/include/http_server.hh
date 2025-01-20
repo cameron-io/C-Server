@@ -4,12 +4,16 @@
 constexpr int MAX_CLIENTS = 10;
 constexpr int PORT = 8080;
 
-class Server {
+class HttpServer {
 public:
-    static int createSocket();
-    static void bindSocket(int serverFd);
-    static void listenSocket(int serverFd);
-    static int acceptConnection(int serverFd);
+    HttpServer() {}
+
+    int createSocket();
+    void bindSocket();
+    void listenSocket();
+    int acceptConnection();
+private:
+    int serverFd;
 };
 
 #endif

@@ -16,14 +16,16 @@ constexpr int MAX_EVENTS = 10;
 int main() {
     struct epoll_event event, events[MAX_EVENTS];
 
+    auto httpServer = new HttpServer();
+
     // Create socket
-    int serverFd = Server::createSocket();
+    int serverFd = httpServer->createSocket();
 
     // Bind socket to address and port
-    Server::bindSocket(serverFd);
+    httpServer->bindSocket();
 
     // Listen for incoming connections
-    Server::listenSocket(serverFd);
+    httpServer->listenSocket();
 
     // Create epoll instance
     int epollFd = epoll_create1(0);
@@ -55,7 +57,7 @@ int main() {
         for (int i = 0; i < numEvents; ++i) {
             if (events[i].data.fd == serverFd) {
                 // Accept new client connection
-                int clientFd = Server::acceptConnection(serverFd);
+                int clientFd = httpServer->acceptConnection();
                 if (clientFd == -1) {
                     std::cerr << "Failed to accept client connection." << std::endl;
                     continue;
