@@ -1,10 +1,8 @@
 include_directories(${CServer_SOURCE_DIR}/lib/include)
 
-add_library(web_server_lib SHARED
-    tcp.c
-    req_content.c
-    req_handler.c
-    res_handler.c
-    conn_manager.c
+add_library(http_server_lib SHARED
+    http_server.cc
+    http_client.cc
+    request_handler.cc
 )
-set_target_properties(web_server_lib PROPERTIES LINKER_LANGUAGE C)
+set_target_properties(http_server_lib PROPERTIES LINKER_LANGUAGE CXX)
