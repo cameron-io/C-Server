@@ -75,10 +75,10 @@ void RequestHandler::serveResource(int clientFd, std::string path)
         return;
     }
 
-    char full_path[128];
-    sprintf(full_path, "%s%s", BASE_PATH, path.c_str());
+    char fullPath[128];
+    sprintf(fullPath, "%s%s", BASE_PATH, path.c_str());
 
-    FILE *fp = fopen(full_path, "rb");
+    FILE *fp = fopen(fullPath, "rb");
     if (!fp)
     {
         ResponseHandler::sendNotFound(clientFd);
@@ -91,7 +91,7 @@ void RequestHandler::serveResource(int clientFd, std::string path)
     rewind(fp);
 
     // Send File Contents
-    const char *contentType = getContentType(full_path);
+    const char *contentType = getContentType(fullPath);
     ResponseHandler::sendFile(clientFd, fp, contentType, contentLength);
 
     fclose(fp);
@@ -99,36 +99,36 @@ void RequestHandler::serveResource(int clientFd, std::string path)
 
 const char *RequestHandler::getContentType(const char *path)
 {
-    const char *last_dot = strrchr(path, '.');
-    if (last_dot)
+    const char *lastDot = strrchr(path, '.');
+    if (lastDot)
     {
-        if (strcmp(last_dot, ".css") == 0)
+        if (strcmp(lastDot, ".css") == 0)
             return "text/css";
-        if (strcmp(last_dot, ".csv") == 0)
+        if (strcmp(lastDot, ".csv") == 0)
             return "text/csv";
-        if (strcmp(last_dot, ".gif") == 0)
+        if (strcmp(lastDot, ".gif") == 0)
             return "image/gif";
-        if (strcmp(last_dot, ".htm") == 0)
+        if (strcmp(lastDot, ".htm") == 0)
             return "text/html";
-        if (strcmp(last_dot, ".html") == 0)
+        if (strcmp(lastDot, ".html") == 0)
             return "text/html";
-        if (strcmp(last_dot, ".ico") == 0)
+        if (strcmp(lastDot, ".ico") == 0)
             return "image/x-icon";
-        if (strcmp(last_dot, ".jpeg") == 0)
+        if (strcmp(lastDot, ".jpeg") == 0)
             return "image/jpeg";
-        if (strcmp(last_dot, ".jpg") == 0)
+        if (strcmp(lastDot, ".jpg") == 0)
             return "image/jpeg";
-        if (strcmp(last_dot, ".js") == 0)
+        if (strcmp(lastDot, ".js") == 0)
             return "application/javascript";
-        if (strcmp(last_dot, ".json") == 0)
+        if (strcmp(lastDot, ".json") == 0)
             return "application/json";
-        if (strcmp(last_dot, ".png") == 0)
+        if (strcmp(lastDot, ".png") == 0)
             return "image/png";
-        if (strcmp(last_dot, ".pdf") == 0)
+        if (strcmp(lastDot, ".pdf") == 0)
             return "application/pdf";
-        if (strcmp(last_dot, ".svg") == 0)
+        if (strcmp(lastDot, ".svg") == 0)
             return "image/svg+xml";
-        if (strcmp(last_dot, ".txt") == 0)
+        if (strcmp(lastDot, ".txt") == 0)
             return "text/plain";
     }
 
