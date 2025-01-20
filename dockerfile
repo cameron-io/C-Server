@@ -8,4 +8,5 @@ RUN apk update && \
         make \
         curl
 ADD . .
-CMD make run APP=http_server
+RUN make compile
+CMD ./.bin/Linux64/Release/bin/http_server
