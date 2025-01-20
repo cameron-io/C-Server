@@ -2,7 +2,7 @@ FROM alpine
 WORKDIR /var/lib/C-Server
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache \
+    apk add \
         clang \
         cmake \
         make \

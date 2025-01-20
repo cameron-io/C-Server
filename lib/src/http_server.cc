@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <stdexcept>
 #include "http_server.hh"
 
 int HttpServer::createSocket()
@@ -12,8 +13,7 @@ int HttpServer::createSocket()
     int serverFd = socket(AF_INET, SOCK_STREAM, 0);
     if (serverFd == -1)
     {
-        std::cerr << "Failed to create socket." << std::endl;
-        exit(1);
+        throw std::runtime_error("Failed to create socket.");
     }
     this->serverFd = serverFd;
     return serverFd;
@@ -27,9 +27,7 @@ void HttpServer::bindSocket()
     serverAddress.sin_port = htons(PORT);
     if (bind(this->serverFd, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
     {
-        std::cerr << "Failed to bind socket." << std::endl;
-        close(this->serverFd);
-        exit(1);
+        throw std::runtime_error("Failed to bind socket.");
     }
 }
 
@@ -37,9 +35,7 @@ void HttpServer::listenSocket()
 {
     if (listen(this->serverFd, MAX_CLIENTS) == -1)
     {
-        std::cerr << "Failed to listen." << std::endl;
-        close(serverFd);
-        exit(1);
+        throw std::runtime_error("Failed to listen.");
     }
 }
 

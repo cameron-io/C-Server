@@ -42,7 +42,7 @@ time_request: $(CURL_FORMAT_CFG)
 
 .PHONY: teardown
 teardown: down
-	docker image rm $(SERVER_NAME)
+	docker image prune
 
 clean:
 	rm -rf ./$(BUILD_DIR) ./$(BIN_DIR)

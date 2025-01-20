@@ -7,15 +7,25 @@ constexpr int PORT = 8080;
 class HttpServer
 {
 public:
-    HttpServer() {}
+    int serverFd;
 
-    int createSocket();
-    void bindSocket();
-    void listenSocket();
+    HttpServer()
+    {
+        this->createSocket();
+        this->bindSocket();
+        this->listenSocket();
+    }
+    ~HttpServer()
+    {
+        close(serverFd);
+    }
+
     int acceptConnection();
 
 private:
-    int serverFd;
+    int createSocket();
+    void bindSocket();
+    void listenSocket();
 };
 
 #endif
