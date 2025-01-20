@@ -9,6 +9,8 @@ OS_NAME = $(shell uname -s)
 OS_BITNESS = $(shell getconf LONG_BIT)
 BIN_PATH = $(BIN_DIR)/$(OS_NAME)$(OS_BITNESS)
 
+CURL_FORMAT_CFG = curl-format.txt
+
 .PHONY: compile
 compile: $(SOURCE_DIRS)
 	cmake -S. -B$(BUILD_DIR)
@@ -33,6 +35,10 @@ build:
 .PHONY: down
 down:
 	docker compose down
+
+.PHONY: time_request
+time_request: $(CURL_FORMAT_CFG)
+	curl -w "@$(CURL_FORMAT_CFG)" -o /dev/null -s http://localhost:$(PORT)/hello.json
 
 .PHONY: teardown
 teardown: down
