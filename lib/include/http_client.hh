@@ -3,6 +3,7 @@
 
 #include <unistd.h>
 #include <thread>
+#include "http_server.hh"
 #include "request_handler.hh"
 
 class Client
@@ -12,7 +13,7 @@ public:
 
     ~Client()
     {
-        close(clientFd);
+        CLOSESOCKET(clientFd);
     }
 
     void handleClient();

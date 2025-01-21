@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include "http_client.hh"
+#include "http_server.hh"
 #include "request_handler.hh"
 
 Client::Client(int clientFd)
@@ -21,5 +22,5 @@ void Client::handleClient()
         RequestHandler::handle(clientFd, input_buffer);
     }
 
-    close(clientFd);
+    CLOSESOCKET(clientFd);
 }

@@ -74,8 +74,19 @@ void RequestHandler::serveResource(int clientFd, std::string path)
         return;
     }
 
-    char fullPath[128];
-    sprintf(fullPath, "%s%s", BASE_PATH, path.c_str());
+    const int pathSize = 128;
+    char fullPath[pathSize];
+    snprintf(fullPath, pathSize, "%s%s", BASE_PATH, path.c_str());
+
+#if defined(_WIN32)
+    char *p = full_path;
+    while (*p)
+    {
+        if (*p == '/')
+            *p = '\\';
+        ++p;
+    }
+#endif
 
     FILE *fp = fopen(fullPath, "rb");
     if (!fp)

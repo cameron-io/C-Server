@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.31 FATAL_ERROR)
-project(CServer VERSION 0.1.0 LANGUAGES C CXX)
+project(CServer VERSION 0.1.0 LANGUAGES CXX)
 
 set(OSBitness 32)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(OSBitness 64)
 endif()
 
-set(CMAKE_C_STANDARD 23)
-# set(CMAKE_C_EXTENSIONS true)
 set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
@@ -17,10 +15,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
-
-set(CMAKE_C_FLAGS "-Wall -Wextra")
-set(CMAKE_C_FLAGS_DEBUG "-g")
-set(CMAKE_C_FLAGS_RELEASE "-O3")
 
 include(CTest)
 enable_testing()

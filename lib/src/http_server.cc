@@ -1,17 +1,12 @@
 #include <iostream>
-#include <unistd.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <string.h>
 #include <stdexcept>
 #include "http_server.hh"
 
-int HttpServer::createSocket()
+SOCKET HttpServer::createSocket()
 {
-    int serverFd = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverFd == -1)
+    SOCKET serverFd = socket(AF_INET, SOCK_STREAM, 0);
+    if (!ISVALIDSOCKET(serverFd))
     {
         throw std::runtime_error("Failed to create socket.");
     }
@@ -39,7 +34,7 @@ void HttpServer::listenSocket()
     }
 }
 
-int HttpServer::acceptConnection()
+SOCKET HttpServer::acceptConnection()
 {
     struct sockaddr_in clientAddress;
     socklen_t clientAddressLength = sizeof(clientAddress);

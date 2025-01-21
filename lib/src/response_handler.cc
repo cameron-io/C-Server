@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include <string.h>
-#include <iostream>
+#include <stdio.h>
 #include "response_handler.hh"
 
 #define BSIZE 1024
@@ -13,31 +13,31 @@ void ResponseHandler::sendHeaders(
 {
     char buffer[BSIZE];
 
-    sprintf(buffer, "HTTP/1.1 %s\r\n", statusCode.c_str());
+    snprintf(buffer, BSIZE, "HTTP/1.1 %s\r\n", statusCode.c_str());
     write(clientFd, buffer, strlen(buffer));
 
     // Default CORS-Headers
-    sprintf(buffer, "Access-Control-Allow-Origin: *\r\n");
+    snprintf(buffer, BSIZE, "Access-Control-Allow-Origin: *\r\n");
     write(clientFd, buffer, strlen(buffer));
-    sprintf(buffer, "Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS\r\n");
+    snprintf(buffer, BSIZE, "Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS\r\n");
     write(clientFd, buffer, strlen(buffer));
-    sprintf(buffer, "Access-Control-Allow-Headers: *\r\n");
+    snprintf(buffer, BSIZE, "Access-Control-Allow-Headers: *\r\n");
     write(clientFd, buffer, strlen(buffer));
-    sprintf(buffer, "Access-Control-Allow-Credentials: true\r\n");
+    snprintf(buffer, BSIZE, "Access-Control-Allow-Credentials: true\r\n");
     write(clientFd, buffer, strlen(buffer));
-    sprintf(buffer, "Access-Control-Max-Age: 86400\r\n");
-    write(clientFd, buffer, strlen(buffer));
-
-    sprintf(buffer, "Content-Length: %u\r\n", contentLength);
+    snprintf(buffer, BSIZE, "Access-Control-Max-Age: 86400\r\n");
     write(clientFd, buffer, strlen(buffer));
 
-    sprintf(buffer, "Content-Type: %s\r\n", contentType.c_str());
+    snprintf(buffer, BSIZE, "Content-Length: %u\r\n", contentLength);
     write(clientFd, buffer, strlen(buffer));
 
-    sprintf(buffer, "Connection: close\r\n");
+    snprintf(buffer, BSIZE, "Content-Type: %s\r\n", contentType.c_str());
     write(clientFd, buffer, strlen(buffer));
 
-    sprintf(buffer, "\r\n");
+    snprintf(buffer, BSIZE, "Connection: close\r\n");
+    write(clientFd, buffer, strlen(buffer));
+
+    snprintf(buffer, BSIZE, "\r\n");
     write(clientFd, buffer, strlen(buffer));
 }
 

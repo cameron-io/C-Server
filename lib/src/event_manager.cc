@@ -1,3 +1,5 @@
+#ifdef __linux__
+
 #include <stdexcept>
 #include <thread>
 #include <iostream>
@@ -77,3 +79,4 @@ void EventManager::startEventLoop()
         }
     }
 }
+#endif
