@@ -6,7 +6,6 @@
 #include <memory>
 #include "event_manager.hh"
 #include "http_server.hh"
-#include "http_client.hh"
 
 int EventManager::setupInstance()
 {
@@ -70,10 +69,9 @@ void EventManager::startEventLoop()
 
             // Create a new thread to handle the client connection
             std::thread clientThread(
-                [clientFd]()
+                [server, clientFd]()
                 {
-                    std::unique_ptr<Client> cl = std::make_unique<Client>(clientFd);
-                    cl->handleClient();
+                    server->readRequest(clientFd);
                 });
             clientThread.detach();
         }

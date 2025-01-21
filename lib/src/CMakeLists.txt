@@ -3,7 +3,6 @@ include_directories(${CServer_SOURCE_DIR}/lib/include)
 add_library(http_server_lib SHARED
     event_manager.cc
     http_server.cc
-    http_client.cc
     request_handler.cc
     response_handler.cc
 )

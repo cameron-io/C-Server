@@ -52,6 +52,7 @@ public:
     }
 
     SOCKET acceptConnection();
+    void readRequest(SOCKET clientFd);
 
 private:
     SOCKET createSocket();

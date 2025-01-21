@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdexcept>
 #include "http_server.hh"
+#include "request_handler.hh"
 
 SOCKET HttpServer::createSocket()
 {
@@ -39,4 +40,21 @@ SOCKET HttpServer::acceptConnection()
     struct sockaddr_in clientAddress;
     socklen_t clientAddressLength = sizeof(clientAddress);
     return accept(this->serverFd, (struct sockaddr *)&clientAddress, &clientAddressLength);
+}
+
+void HttpServer::readRequest(SOCKET clientFd)
+{
+    char input_buffer[1024];
+
+    while (true)
+    {
+        int bytesRead = recv(clientFd, input_buffer, sizeof(input_buffer), 0);
+        if (bytesRead <= 0)
+        {
+            break;
+        }
+        RequestHandler::handle(clientFd, input_buffer);
+    }
+
+    CLOSESOCKET(clientFd);
 }
