@@ -16,6 +16,14 @@ brew install cmake ninja
 
 ### Usage
 
+Windows:
+```
+.\build.bat
+.\.bin\Windows64\bin\Release\http_server.exe
+```
+
+Unix:
+
 ```
 make compile
 make run APP=<BINARY>

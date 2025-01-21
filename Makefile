@@ -1,10 +1,6 @@
 #!make
 include .env
 
-SOURCE_DIRS = app lib
-BIN_DIR = ./.bin
-BUILD_DIR = ./.build
-
 OS_NAME = $(shell uname -s)
 OS_BITNESS = $(shell getconf LONG_BIT)
 BIN_PATH = $(BIN_DIR)/$(OS_NAME)$(OS_BITNESS)
@@ -13,8 +9,8 @@ CURL_FORMAT_CFG = curl-format.txt
 
 .PHONY: compile
 compile: $(SOURCE_DIRS)
-	cmake -S. -B$(BUILD_DIR)
-	cmake --build $(BUILD_DIR)
+	cmake -S. -B./$(BUILD_DIR)
+	cmake --build ./$(BUILD_DIR)
 
 .PHONY: run
 run: compile
