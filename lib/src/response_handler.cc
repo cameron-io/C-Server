@@ -11,33 +11,24 @@ void ResponseHandler::sendHeaders(
     std::string contentType,
     unsigned int contentLength)
 {
+    const char *headers =
+        "HTTP/1.1 %s\r\n"
+        "Content-Length: %u\r\n"
+        "Content-Type: %s\r\n"
+        "Connection: close\r\n"
+        // Default CORS-Headers
+        "Access-Control-Allow-Origin: *\r\n"
+        "Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS\r\n"
+        "Access-Control-Allow-Headers: *\r\n"
+        "Access-Control-Allow-Credentials: true\r\n"
+        "Access-Control-Max-Age: 86400\r\n"
+        "\r\n";
+
     char buffer[BSIZE];
-
-    snprintf(buffer, BSIZE, "HTTP/1.1 %s\r\n", statusCode.c_str());
-    write(clientFd, buffer, strlen(buffer));
-
-    // Default CORS-Headers
-    snprintf(buffer, BSIZE, "Access-Control-Allow-Origin: *\r\n");
-    write(clientFd, buffer, strlen(buffer));
-    snprintf(buffer, BSIZE, "Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS\r\n");
-    write(clientFd, buffer, strlen(buffer));
-    snprintf(buffer, BSIZE, "Access-Control-Allow-Headers: *\r\n");
-    write(clientFd, buffer, strlen(buffer));
-    snprintf(buffer, BSIZE, "Access-Control-Allow-Credentials: true\r\n");
-    write(clientFd, buffer, strlen(buffer));
-    snprintf(buffer, BSIZE, "Access-Control-Max-Age: 86400\r\n");
-    write(clientFd, buffer, strlen(buffer));
-
-    snprintf(buffer, BSIZE, "Content-Length: %u\r\n", contentLength);
-    write(clientFd, buffer, strlen(buffer));
-
-    snprintf(buffer, BSIZE, "Content-Type: %s\r\n", contentType.c_str());
-    write(clientFd, buffer, strlen(buffer));
-
-    snprintf(buffer, BSIZE, "Connection: close\r\n");
-    write(clientFd, buffer, strlen(buffer));
-
-    snprintf(buffer, BSIZE, "\r\n");
+    snprintf(buffer, BSIZE, headers,
+             statusCode.c_str(),
+             contentLength,
+             contentType.c_str());
     write(clientFd, buffer, strlen(buffer));
 }
 
