@@ -1,4 +1,3 @@
-#include <unistd.h>
 #include "http_client.hh"
 #include "http_server.hh"
 #include "request_handler.hh"
@@ -14,7 +13,7 @@ void Client::handleClient()
 
     while (true)
     {
-        int bytesRead = read(clientFd, input_buffer, sizeof(input_buffer));
+        int bytesRead = recv(clientFd, input_buffer, sizeof(input_buffer), 0);
         if (bytesRead <= 0)
         {
             break;

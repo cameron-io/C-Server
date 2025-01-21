@@ -1,9 +1,9 @@
 #include <iostream>
-#include <unistd.h>
 #include <string>
 #include <string.h>
 #include "request_handler.hh"
 #include "response_handler.hh"
+#include "http_server.hh"
 
 #define BASE_PATH "static"
 
@@ -79,7 +79,7 @@ void RequestHandler::serveResource(int clientFd, std::string path)
     snprintf(fullPath, pathSize, "%s%s", BASE_PATH, path.c_str());
 
 #if defined(_WIN32)
-    char *p = full_path;
+    char *p = fullPath;
     while (*p)
     {
         if (*p == '/')

@@ -1,7 +1,6 @@
 #ifndef HTTP_CLIENT_H
 #define HTTP_CLIENT_H
 
-#include <unistd.h>
 #include <thread>
 #include "http_server.hh"
 #include "request_handler.hh"

@@ -1,7 +1,7 @@
-#include <unistd.h>
 #include <string.h>
 #include <stdio.h>
 #include "response_handler.hh"
+#include "http_server.hh"
 
 #define BSIZE 1024
 
@@ -29,7 +29,7 @@ void ResponseHandler::sendHeaders(
              statusCode.c_str(),
              contentLength,
              contentType.c_str());
-    write(clientFd, buffer, strlen(buffer));
+    send(clientFd, buffer, strlen(buffer), 0);
 }
 
 void ResponseHandler::sendOk(
@@ -38,7 +38,7 @@ void ResponseHandler::sendOk(
     std::string data)
 {
     sendHeaders(clientFd, "200 OK", contentType, data.length());
-    write(clientFd, data.c_str(), data.length());
+    send(clientFd, data.c_str(), data.length(), 0);
 }
 
 void ResponseHandler::sendNoContent(int clientFd)
@@ -51,7 +51,7 @@ void ResponseHandler::sendBadRequest(
     std::string data)
 {
     sendHeaders(clientFd, "400 Bad Request", "text/plain", data.length());
-    write(clientFd, data.c_str(), data.length());
+    send(clientFd, data.c_str(), data.length(), 0);
 }
 
 void ResponseHandler::sendNotFound(
@@ -59,7 +59,7 @@ void ResponseHandler::sendNotFound(
     std::string data)
 {
     sendHeaders(clientFd, "404 Not Found", "text/plain", data.length());
-    write(clientFd, data.c_str(), data.length());
+    send(clientFd, data.c_str(), data.length(), 0);
 }
 
 void ResponseHandler::sendFile(
@@ -74,7 +74,7 @@ void ResponseHandler::sendFile(
     int r = fread(buffer, 1, BSIZE, fp);
     while (r)
     {
-        write(clientFd, buffer, r);
+        send(clientFd, buffer, r, 0);
         r = fread(buffer, 1, BSIZE, fp);
     }
 }
