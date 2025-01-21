@@ -35,13 +35,7 @@ private:
 };
 #else
 #include <memory>
-#include <stdexcept>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "http_server.hh"
-#include "request_handler.hh"
-#include "response_handler.hh"
 
 #define MAX_REQUEST_SIZE 2047
 

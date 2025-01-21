@@ -80,7 +80,11 @@ void EventManager::startEventLoop()
     }
 }
 #else
+#include <stdexcept>
 #include "event_manager.hh"
+#include "http_server.hh"
+#include "request_handler.hh"
+#include "response_handler.hh"
 
 void EventManager::startEventLoop()
 {
@@ -190,8 +194,7 @@ struct ClientInfo *EventManager::getClient(struct ClientInfo **clientList,
 
     if (!n)
     {
-        fprintf(stderr, "Out of memory.\n");
-        exit(1);
+        throw std::runtime_error("Out of memory.");
     }
 
     n->addressLength = sizeof(n->address);
@@ -218,8 +221,7 @@ void EventManager::dropClient(struct ClientInfo **clientList,
         p = &(*p)->next;
     }
 
-    fprintf(stderr, "dropClient not found.\n");
-    exit(1);
+    throw std::runtime_error("dropClient not found.");
 }
 
 #endif
