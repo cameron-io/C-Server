@@ -41,8 +41,6 @@ private:
 
 struct ClientInfo
 {
-    socklen_t addressLength;
-    struct sockaddr_storage address;
     SOCKET socket;
     char request[MAX_REQUEST_SIZE + 1];
     int received;
@@ -61,8 +59,7 @@ public:
     void startEventLoop();
 
 private:
-    struct ClientInfo *getClient(struct ClientInfo **clientList,
-                                 SOCKET s);
+    struct ClientInfo *getClient(struct ClientInfo **clientList);
 
     void dropClient(struct ClientInfo **clientList,
                     struct ClientInfo *client);

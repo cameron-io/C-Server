@@ -97,11 +97,9 @@ void EventManager::startEventLoop()
 
         if (FD_ISSET(server->serverFd, &reads))
         {
-            struct ClientInfo *client = this->getClient(&clientList, -1);
+            struct ClientInfo *client = this->getClient(&clientList);
 
-            client->socket = accept(server->serverFd,
-                                    (struct sockaddr *)&(client->address),
-                                    &(client->addressLength));
+            client->socket = server->acceptConnection();
 
             if (!ISVALIDSOCKET(client->socket))
             {
@@ -175,32 +173,32 @@ fd_set EventManager::waitOnClients(struct ClientInfo **clientList)
     return reads;
 }
 
-struct ClientInfo *EventManager::getClient(struct ClientInfo **clientList,
-                                           SOCKET s)
+struct ClientInfo *EventManager::getClient(struct ClientInfo **clientList)
 {
-    struct ClientInfo *ci = *clientList;
+    struct ClientInfo *client = *clientList;
 
-    while (ci)
+    while (client)
     {
-        if (ci->socket == s)
+        if (client->socket == -1)
             break;
-        ci = ci->next;
+        client = client->next;
     }
 
-    if (ci)
-        return ci;
-    struct ClientInfo *n =
+    if (client)
+        return client;
+
+    struct ClientInfo *newClient =
         (struct ClientInfo *)calloc(1, sizeof(struct ClientInfo));
 
-    if (!n)
+    if (!newClient)
     {
         throw std::runtime_error("Out of memory.");
     }
 
-    n->addressLength = sizeof(n->address);
-    n->next = *clientList;
-    *clientList = n;
-    return n;
+    // prepend new client to list
+    newClient->next = *clientList;
+    *clientList = newClient;
+    return newClient;
 }
 
 void EventManager::dropClient(struct ClientInfo **clientList,
