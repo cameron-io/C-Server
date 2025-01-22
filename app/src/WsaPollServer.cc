@@ -27,9 +27,13 @@
 
 #define WS_VER 0x0202
 
-#define DEFAULT_PORT 12345
+#define DEFAULT_PORT 8080
 
-#define TST_MSG "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: 12\r\n\r\nHello World!"
+#define TST_MSG "HTTP/1.1 200 OK\r\n"    \
+                "Connection: close\r\n"  \
+                "Content-Length: 12\r\n" \
+                "\r\n"                   \
+                "Hello World!"
 
 HANDLE hCloseSignal = NULL;
 
