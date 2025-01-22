@@ -58,7 +58,7 @@ int main()
     std::unique_ptr<EventManager> eventManager =
         std::make_unique<EventManager>(serverFd);
 
-    std::cout << "Listening on port: " << PORT << std::endl;
+    printf("Listening on port: %d\n", PORT);
     eventManager->StartEventLoop();
 
     return 0;

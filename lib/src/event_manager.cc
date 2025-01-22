@@ -34,7 +34,7 @@ void EventManager::StartEventLoop()
         int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, -1);
         if (numEvents == -1)
         {
-            std::cerr << "Failed to wait for events." << std::endl;
+            fprintf(stderr, "Failed to wait for events.\n");
             break;
         }
 
@@ -47,7 +47,7 @@ void EventManager::StartEventLoop()
                 clientFd = HttpServer::AcceptConnection();
                 if (clientFd == -1)
                 {
-                    std::cerr << "Failed to accept client connection." << std::endl;
+                    fprintf(stderr, "Failed to accept client connection.\n");
                     continue;
                 }
 
@@ -56,7 +56,7 @@ void EventManager::StartEventLoop()
                 event.data.fd = clientFd;
                 if (epoll_ctl(epollFd, EPOLL_CTL_ADD, clientFd, &event) == -1)
                 {
-                    std::cerr << "Failed to add client socket to epoll instance." << std::endl;
+                    fprintf(stderr, "Failed to add client socket to epoll instance.\n");
                     close(clientFd);
                     continue;
                 }
