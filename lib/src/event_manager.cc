@@ -69,9 +69,9 @@ void EventManager::startEventLoop()
 
             // Create a new thread to handle the client connection
             std::thread clientThread(
-                [server, clientFd]()
+                [this, clientFd]()
                 {
-                    server->readRequest(clientFd);
+                    this->server->readRequest(clientFd);
                 });
             clientThread.detach();
         }
@@ -90,10 +90,10 @@ void EventManager::startEventLoop()
 
     while (true)
     {
-        fd_set reads;
-        reads = this->waitOnClients(&clientList);
+        fd_set activeSockets;
+        activeSockets = this->waitOnClients(&clientList);
 
-        if (FD_ISSET(server->serverFd, &reads))
+        if (FD_ISSET(server->serverFd, &activeSockets))
         {
             struct ClientInfo *client = this->getClient(&clientList);
 
@@ -110,7 +110,7 @@ void EventManager::startEventLoop()
         {
             struct ClientInfo *next = client->next;
 
-            if (FD_ISSET(client->socket, &reads))
+            if (FD_ISSET(client->socket, &activeSockets))
             {
                 if (MAX_REQUEST_SIZE == client->received)
                 {
@@ -148,27 +148,27 @@ void EventManager::startEventLoop()
 
 fd_set EventManager::waitOnClients(struct ClientInfo **clientList)
 {
-    fd_set reads;
-    FD_ZERO(&reads);
-    FD_SET(server->serverFd, &reads);
+    fd_set activeSockets;
+    FD_ZERO(&activeSockets);
+    FD_SET(server->serverFd, &activeSockets);
     SOCKET maxSocket = server->serverFd;
 
     struct ClientInfo *ci = *clientList;
 
     while (ci)
     {
-        FD_SET(ci->socket, &reads);
+        FD_SET(ci->socket, &activeSockets);
         if (ci->socket > maxSocket)
             maxSocket = ci->socket;
         ci = ci->next;
     }
 
-    if (select(maxSocket + 1, &reads, 0, 0, 0) < 0)
+    if (select(maxSocket + 1, &activeSockets, 0, 0, 0) < 0)
     {
         throw std::runtime_error("select() failed.");
     }
 
-    return reads;
+    return activeSockets;
 }
 
 struct ClientInfo *EventManager::getClient(struct ClientInfo **clientList)

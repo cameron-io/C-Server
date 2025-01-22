@@ -14,7 +14,7 @@ compile: $(SOURCE_DIRS)
 
 .PHONY: run
 run: compile
-	$(BIN_PATH)/Release/bin/$(APP) $(ARGS)
+	./.bin/Linux64/bin/http_server $(ARGS)
 
 .PHONY: test
 test: compile
