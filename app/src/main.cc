@@ -37,12 +37,16 @@ void int_handler(int sig)
 
 int main()
 {
+#ifdef _WIN32
+    signal(SIGINT, int_handler);
+#else
     struct sigaction sigIntHandler;
     sigIntHandler.sa_handler = int_handler;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
 
     sigaction(SIGINT, &sigIntHandler, NULL);
+#endif
 
 #if defined(_WIN32)
     WSADATA d;
