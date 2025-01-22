@@ -8,7 +8,7 @@
 #include "request_handler.hh"
 #include "response_handler.hh"
 
-void int_handler(int sig)
+void IntHandler(int sig)
 {
     char c;
 
@@ -17,31 +17,28 @@ void int_handler(int sig)
     c = getchar();
     if (c == 'y' || c == 'Y')
     {
-        printf("Shutting down...");
+        printf("Shutting down...\n");
         HttpServer::Stop();
 
 #if defined(_WIN32)
         WSACleanup();
 #endif
 
-        printf("OK\n");
+        printf("Finished.\n");
 
         exit(0);
     }
-    else
-    {
-        signal(SIGINT, int_handler);
-    }
+    signal(SIGINT, IntHandler);
     getchar();
 }
 
 int main()
 {
 #ifdef _WIN32
-    signal(SIGINT, int_handler);
+    signal(SIGINT, IntHandler);
 #else
     struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = int_handler;
+    sigIntHandler.sa_handler = IntHandler;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
 
