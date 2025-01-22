@@ -18,7 +18,7 @@ void int_handler(int sig)
     if (c == 'y' || c == 'Y')
     {
         printf("Shutting down...");
-        http_server_stop();
+        HttpServer::Stop();
 
 #if defined(_WIN32)
         WSACleanup();
@@ -53,13 +53,13 @@ int main()
     }
 #endif
 
-    SOCKET serverFd = http_server_init();
+    SOCKET serverFd = HttpServer::Init();
 
     std::unique_ptr<EventManager> eventManager =
         std::make_unique<EventManager>(serverFd);
 
     std::cout << "Listening on port: " << PORT << std::endl;
-    eventManager->startEventLoop();
+    eventManager->StartEventLoop();
 
     return 0;
 }

@@ -35,10 +35,12 @@ constexpr int PORT = 8080;
 #define GETSOCKETERRNO() (errno)
 #endif
 
-SOCKET http_server_init();
-SOCKET http_server_get_socket();
-void http_server_stop();
-SOCKET http_server_accept_connection();
-void http_server_read_request(SOCKET clientFd);
-
+namespace HttpServer
+{
+    SOCKET Init();
+    SOCKET GetSocket();
+    void Stop();
+    SOCKET AcceptConnection();
+    void ReadRequest(SOCKET clientFd);
+}
 #endif

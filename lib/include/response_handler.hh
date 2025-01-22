@@ -4,25 +4,29 @@
 #include <iostream>
 #include <string>
 
-void send_ok(
-    int clientFd,
-    std::string contentType,
-    std::string data);
+namespace ResHandler
+{
 
-void send_no_content(int clientFd);
+    void SendOK(
+        int clientFd,
+        std::string contentType,
+        std::string data);
 
-void send_bad_request(
-    int clientFd,
-    std::string data);
+    void SendNoContent(int clientFd);
 
-void send_not_found(
-    int clientFd,
-    std::string data);
+    void SendBadRequest(
+        int clientFd,
+        std::string data);
 
-void send_file(
-    int clientFd,
-    FILE *fp,
-    std::string contentType,
-    size_t contentLength);
+    void SendNotFound(
+        int clientFd,
+        std::string data);
+
+    void SendFile(
+        int clientFd,
+        FILE *fp,
+        std::string contentType,
+        size_t contentLength);
+}
 
 #endif

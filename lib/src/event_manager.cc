@@ -7,7 +7,7 @@
 #include "event_manager.hh"
 #include "http_server.hh"
 
-int EventManager::setupInstance()
+int EventManager::SetupInstance()
 {
     int epollFd = epoll_create1(0);
     if (epollFd == -1)
@@ -17,7 +17,7 @@ int EventManager::setupInstance()
     return epollFd;
 }
 
-void EventManager::addEventStream()
+void EventManager::AddEventStream()
 {
     event.events = EPOLLIN;
     event.data.fd = serverFd;
@@ -27,7 +27,7 @@ void EventManager::addEventStream()
     }
 }
 
-void EventManager::startEventLoop()
+void EventManager::StartEventLoop()
 {
     while (true)
     {
@@ -44,7 +44,7 @@ void EventManager::startEventLoop()
             if (events[i].data.fd == serverFd)
             {
                 // Accept new client connection
-                clientFd = http_server_accept_connection();
+                clientFd = HttpServer::AcceptConnection();
                 if (clientFd == -1)
                 {
                     std::cerr << "Failed to accept client connection." << std::endl;
@@ -71,7 +71,7 @@ void EventManager::startEventLoop()
             std::thread clientThread(
                 [clientFd]()
                 {
-                    http_server_read_request(clientFd);
+                    HttpServer::ReadRequest(clientFd);
                 });
             clientThread.detach();
         }
@@ -84,20 +84,20 @@ void EventManager::startEventLoop()
 #include "request_handler.hh"
 #include "response_handler.hh"
 
-void EventManager::startEventLoop()
+void EventManager::StartEventLoop()
 {
     struct ClientInfo *clientList = 0;
 
     while (true)
     {
         fd_set activeSockets;
-        activeSockets = this->waitOnClients(&clientList);
+        activeSockets = this->WaitOnClients(&clientList);
 
         if (FD_ISSET(serverFd, &activeSockets))
         {
-            struct ClientInfo *client = this->getClient(&clientList);
+            struct ClientInfo *client = this->GetClient(&clientList);
 
-            client->socket = http_server_accept_connection();
+            client->socket = HttpServer::AcceptConnection();
 
             if (!ISVALIDSOCKET(client->socket))
             {
@@ -114,7 +114,7 @@ void EventManager::startEventLoop()
             {
                 if (MAX_REQUEST_SIZE == client->received)
                 {
-                    send_bad_request(client->socket, "Request too large.");
+                    ResHandler::SendBadRequest(client->socket, "Request too large.");
                     client = next;
                     continue;
                 }
@@ -125,7 +125,7 @@ void EventManager::startEventLoop()
 
                 if (r < 1)
                 {
-                    this->dropClient(&clientList, client);
+                    this->DropClient(&clientList, client);
                 }
                 else
                 {
@@ -136,8 +136,8 @@ void EventManager::startEventLoop()
                     if (q)
                     {
                         *q = 0;
-                        request_handler_handle(client->socket, client->request);
-                        this->dropClient(&clientList, client);
+                        ReqHandler::Handle(client->socket, client->request);
+                        this->DropClient(&clientList, client);
                     }
                 }
             }
@@ -146,7 +146,7 @@ void EventManager::startEventLoop()
     }
 }
 
-fd_set EventManager::waitOnClients(struct ClientInfo **clientList)
+fd_set EventManager::WaitOnClients(struct ClientInfo **clientList)
 {
     fd_set activeSockets;
     FD_ZERO(&activeSockets);
@@ -171,7 +171,7 @@ fd_set EventManager::waitOnClients(struct ClientInfo **clientList)
     return activeSockets;
 }
 
-struct ClientInfo *EventManager::getClient(struct ClientInfo **clientList)
+struct ClientInfo *EventManager::GetClient(struct ClientInfo **clientList)
 {
     struct ClientInfo *client = *clientList;
 
@@ -199,7 +199,7 @@ struct ClientInfo *EventManager::getClient(struct ClientInfo **clientList)
     return newClient;
 }
 
-void EventManager::dropClient(struct ClientInfo **clientList,
+void EventManager::DropClient(struct ClientInfo **clientList,
                               struct ClientInfo *client)
 {
     CLOSESOCKET(client->socket);
@@ -217,7 +217,7 @@ void EventManager::dropClient(struct ClientInfo **clientList,
         p = &(*p)->next;
     }
 
-    throw std::runtime_error("dropClient not found.");
+    throw std::runtime_error("DropClient not found.");
 }
 
 #endif

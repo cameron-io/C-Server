@@ -4,6 +4,9 @@
 #include <string>
 #include "http_server.hh"
 
-void request_handler_handle(SOCKET clientFd, std::string r);
+namespace ReqHandler
+{
+    void Handle(SOCKET clientFd, std::string request);
+}
 
 #endif

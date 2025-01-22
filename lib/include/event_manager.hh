@@ -17,22 +17,22 @@ class EventManager
 public:
     EventManager(SOCKET serverSocket)
     {
-        this->epollFd = setupInstance();
+        this->epollFd = SetupInstance();
         this->serverFd = serverSocket;
-        addEventStream();
+        AddEventStream();
     }
 
     ~EventManager()
     {
         CLOSESOCKET(epollFd);
-        http_server_stop();
+        HttpServer::Stop();
     }
 
-    void startEventLoop();
+    void StartEventLoop();
 
 private:
-    int setupInstance();
-    void addEventStream();
+    int SetupInstance();
+    void AddEventStream();
 };
 #else
 #include <memory>
@@ -57,15 +57,15 @@ public:
     {
         this->serverFd = serverSocket;
     }
-    void startEventLoop();
+    void StartEventLoop();
 
 private:
-    struct ClientInfo *getClient(struct ClientInfo **clientList);
+    struct ClientInfo *GetClient(struct ClientInfo **clientList);
 
-    void dropClient(struct ClientInfo **clientList,
+    void DropClient(struct ClientInfo **clientList,
                     struct ClientInfo *client);
 
-    fd_set waitOnClients(struct ClientInfo **clientList);
+    fd_set WaitOnClients(struct ClientInfo **clientList);
 };
 #endif
 
