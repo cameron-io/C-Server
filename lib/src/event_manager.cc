@@ -20,8 +20,8 @@ int EventManager::setupInstance()
 void EventManager::addEventStream()
 {
     event.events = EPOLLIN;
-    event.data.fd = server->serverFd;
-    if (epoll_ctl(this->epollFd, EPOLL_CTL_ADD, server->serverFd, &event) == -1)
+    event.data.fd = serverFd;
+    if (epoll_ctl(this->epollFd, EPOLL_CTL_ADD, serverFd, &event) == -1)
     {
         throw std::runtime_error("Failed to add server to epoll instance.");
     }
@@ -41,10 +41,10 @@ void EventManager::startEventLoop()
         for (int i = 0; i < numEvents; ++i)
         {
             int clientFd;
-            if (events[i].data.fd == server->serverFd)
+            if (events[i].data.fd == serverFd)
             {
                 // Accept new client connection
-                clientFd = server->acceptConnection();
+                clientFd = http_server_accept_connection();
                 if (clientFd == -1)
                 {
                     std::cerr << "Failed to accept client connection." << std::endl;
@@ -69,9 +69,9 @@ void EventManager::startEventLoop()
 
             // Create a new thread to handle the client connection
             std::thread clientThread(
-                [this, clientFd]()
+                [clientFd]()
                 {
-                    this->server->readRequest(clientFd);
+                    http_server_read_request(clientFd);
                 });
             clientThread.detach();
         }
@@ -93,11 +93,11 @@ void EventManager::startEventLoop()
         fd_set activeSockets;
         activeSockets = this->waitOnClients(&clientList);
 
-        if (FD_ISSET(server->serverFd, &activeSockets))
+        if (FD_ISSET(serverFd, &activeSockets))
         {
             struct ClientInfo *client = this->getClient(&clientList);
 
-            client->socket = server->acceptConnection();
+            client->socket = http_server_accept_connection();
 
             if (!ISVALIDSOCKET(client->socket))
             {
@@ -114,7 +114,7 @@ void EventManager::startEventLoop()
             {
                 if (MAX_REQUEST_SIZE == client->received)
                 {
-                    ResponseHandler::sendBadRequest(client->socket, "Request too large.");
+                    send_bad_request(client->socket, "Request too large.");
                     client = next;
                     continue;
                 }
@@ -136,7 +136,7 @@ void EventManager::startEventLoop()
                     if (q)
                     {
                         *q = 0;
-                        RequestHandler::handle(client->socket, client->request);
+                        request_handler_handle(client->socket, client->request);
                         this->dropClient(&clientList, client);
                     }
                 }
@@ -150,8 +150,8 @@ fd_set EventManager::waitOnClients(struct ClientInfo **clientList)
 {
     fd_set activeSockets;
     FD_ZERO(&activeSockets);
-    FD_SET(server->serverFd, &activeSockets);
-    SOCKET maxSocket = server->serverFd;
+    FD_SET(serverFd, &activeSockets);
+    SOCKET maxSocket = serverFd;
 
     struct ClientInfo *ci = *clientList;
 

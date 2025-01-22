@@ -4,45 +4,67 @@
 #include "http_server.hh"
 #include "request_handler.hh"
 
-SOCKET HttpServer::createSocket()
+SOCKET serverFd;
+
+void http_server_create_socket();
+void http_server_bind_socket(SOCKET serverFd);
+void http_server_listen_socket();
+
+SOCKET http_server_init()
 {
-    SOCKET serverFd = socket(AF_INET, SOCK_STREAM, 0);
+    http_server_create_socket();
+    http_server_bind_socket(serverFd);
+    http_server_listen_socket();
+    return serverFd;
+}
+
+SOCKET http_server_get_socket()
+{
+    return serverFd;
+}
+
+void http_server_stop()
+{
+    CLOSESOCKET(serverFd);
+}
+
+void http_server_create_socket()
+{
+    serverFd = socket(AF_INET, SOCK_STREAM, 0);
     if (!ISVALIDSOCKET(serverFd))
     {
         throw std::runtime_error("Failed to create socket.");
     }
-    this->serverFd = serverFd;
-    return serverFd;
 }
 
-void HttpServer::bindSocket()
+void http_server_bind_socket(SOCKET serverFd)
 {
     struct sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = INADDR_ANY;
     serverAddress.sin_port = htons(PORT);
-    if (bind(this->serverFd, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
+    if (bind(serverFd, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
     {
         throw std::runtime_error("Failed to bind socket.");
     }
 }
 
-void HttpServer::listenSocket()
+void http_server_listen_socket()
 {
-    if (listen(this->serverFd, MAX_CLIENTS) == -1)
+    if (listen(serverFd, MAX_CLIENTS) == -1)
     {
         throw std::runtime_error("Failed to listen.");
     }
 }
 
-SOCKET HttpServer::acceptConnection()
+SOCKET http_server_accept_connection()
 {
     struct sockaddr_in clientAddress;
     socklen_t clientAddressLength = sizeof(clientAddress);
-    return accept(this->serverFd, (struct sockaddr *)&clientAddress, &clientAddressLength);
+    return accept(serverFd, (struct sockaddr *)&clientAddress, &clientAddressLength);
 }
 
-void HttpServer::readRequest(SOCKET clientFd)
+void http_server_read_request(SOCKET clientFd)
 {
     char input_buffer[1024];
 
@@ -53,7 +75,7 @@ void HttpServer::readRequest(SOCKET clientFd)
         {
             break;
         }
-        RequestHandler::handle(clientFd, input_buffer);
+        request_handler_handle(clientFd, input_buffer);
     }
 
     CLOSESOCKET(clientFd);

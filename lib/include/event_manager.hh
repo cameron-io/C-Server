@@ -12,19 +12,20 @@ class EventManager
 {
     int epollFd;
     struct epoll_event event, events[MAX_EVENTS];
-    std::shared_ptr<HttpServer> server;
+    SOCKET serverFd;
 
 public:
-    EventManager(std::shared_ptr<HttpServer> httpServer)
-        : server(httpServer)
+    EventManager(SOCKET serverSocket)
     {
         this->epollFd = setupInstance();
+        this->serverFd = serverSocket;
         addEventStream();
     }
 
     ~EventManager()
     {
-        close(epollFd);
+        CLOSESOCKET(epollFd);
+        http_server_stop();
     }
 
     void startEventLoop();
@@ -49,12 +50,12 @@ struct ClientInfo
 
 class EventManager
 {
-    std::shared_ptr<HttpServer> server;
+    SOCKET serverFd;
 
 public:
-    EventManager(std::shared_ptr<HttpServer> httpServer)
-        : server(httpServer)
+    EventManager(SOCKET serverSocket)
     {
+        this->serverFd = serverSocket;
     }
     void startEventLoop();
 

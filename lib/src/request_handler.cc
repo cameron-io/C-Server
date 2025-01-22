@@ -7,25 +7,13 @@
 
 #define BASE_PATH "static"
 
-std::string RequestHandler::parseMethod(std::string r)
-{
-    std::string method;
-    if (r.substr(0, 3) == "GET")
-        method = "GET";
-    else if (r.substr(0, 3) == "PUT")
-        method = "PUT";
-    else if (r.substr(0, 4) == "POST")
-        method = "POST";
-    else if (r.substr(0, 6) == "DELETE")
-        method = "DELETE";
-    else if (r.substr(0, 7) == "OPTIONS")
-        method = "OPTIONS";
-    return method;
-}
+std::string request_handler_parse_method(std::string r);
+std::string request_handler_get_content_type(std::string path);
+void request_handler_serve_resource(SOCKET clientFd, std::string path);
 
-void RequestHandler::handle(int clientFd, std::string r)
+void request_handler_handle(SOCKET clientFd, std::string r)
 {
-    std::string method = parseMethod(r);
+    std::string method = request_handler_parse_method(r);
 
     if (method == "GET")
     {
@@ -33,44 +21,44 @@ void RequestHandler::handle(int clientFd, std::string r)
         size_t endIndex = path.find(" ");
         if (endIndex == std::string::npos)
         {
-            ResponseHandler::sendBadRequest(clientFd, "Invalid path.");
+            send_bad_request(clientFd, "Invalid path.");
         }
         else
         {
             // null terminate path
             path[endIndex] = 0;
-            serveResource(clientFd, path.c_str());
+            request_handler_serve_resource(clientFd, path.c_str());
         }
     }
     else if (method == "POST")
     {
-        ResponseHandler::sendNoContent(clientFd);
+        send_no_content(clientFd);
     }
     else if (method == "OPTIONS")
     {
         // Handle CORS pre-flight
-        ResponseHandler::sendNoContent(clientFd);
+        send_no_content(clientFd);
     }
     else
     {
-        ResponseHandler::sendBadRequest(clientFd, "Unsupported Request.");
+        send_bad_request(clientFd, "Unsupported Request.");
     }
 }
 
-void RequestHandler::serveResource(int clientFd, std::string path)
+void request_handler_serve_resource(SOCKET clientFd, std::string path)
 {
     if (path == "/")
         path = "/index.html";
 
     if (path.length() > 100)
     {
-        ResponseHandler::sendBadRequest(clientFd, "Path size too large.");
+        send_bad_request(clientFd, "Path size too large.");
         return;
     }
 
     if (path.find("..") != std::string::npos)
     {
-        ResponseHandler::sendBadRequest(clientFd, "Path navigation not permitted.");
+        send_bad_request(clientFd, "Path navigation not permitted.");
         return;
     }
 
@@ -91,7 +79,7 @@ void RequestHandler::serveResource(int clientFd, std::string path)
     FILE *fp = fopen(fullPath, "rb");
     if (!fp)
     {
-        ResponseHandler::sendNotFound(clientFd, "Could not locate resource.");
+        send_not_found(clientFd, "Could not locate resource.");
         return;
     }
 
@@ -101,13 +89,13 @@ void RequestHandler::serveResource(int clientFd, std::string path)
     rewind(fp);
 
     // Send File Contents
-    std::string contentType = getContentType(fullPath);
-    ResponseHandler::sendFile(clientFd, fp, contentType.c_str(), contentLength);
+    std::string contentType = request_handler_get_content_type(fullPath);
+    send_file(clientFd, fp, contentType.c_str(), contentLength);
 
     fclose(fp);
 }
 
-std::string RequestHandler::getContentType(std::string path)
+std::string request_handler_get_content_type(std::string path)
 {
     size_t lastDotIndex = path.rfind('.');
     if (lastDotIndex != std::string::npos)
@@ -145,4 +133,20 @@ std::string RequestHandler::getContentType(std::string path)
     }
 
     return "application/octet-stream";
+}
+
+std::string request_handler_parse_method(std::string r)
+{
+    std::string method;
+    if (r.substr(0, 3) == "GET")
+        method = "GET";
+    else if (r.substr(0, 3) == "PUT")
+        method = "PUT";
+    else if (r.substr(0, 4) == "POST")
+        method = "POST";
+    else if (r.substr(0, 6) == "DELETE")
+        method = "DELETE";
+    else if (r.substr(0, 7) == "OPTIONS")
+        method = "OPTIONS";
+    return method;
 }

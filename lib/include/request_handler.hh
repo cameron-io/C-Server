@@ -2,18 +2,8 @@
 #define REQUEST_HANDLER_H
 
 #include <string>
+#include "http_server.hh"
 
-class RequestHandler
-{
-public:
-    static void handle(int clientFd, std::string request);
-
-private:
-    static std::string parseMethod(std::string r);
-    static std::string getContentType(std::string path);
-    static void serveResource(
-        int clientFd,
-        std::string path);
-};
+void request_handler_handle(SOCKET clientFd, std::string r);
 
 #endif

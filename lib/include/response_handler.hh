@@ -4,28 +4,25 @@
 #include <iostream>
 #include <string>
 
-class ResponseHandler
-{
-public:
-    static void sendNoContent(int clientFd);
+void send_ok(
+    int clientFd,
+    std::string contentType,
+    std::string data);
 
-    static void sendOk(
-        int clientFd,
-        std::string contentType,
-        std::string data);
+void send_no_content(int clientFd);
 
-    static void sendBadRequest(int clientFd, std::string data);
+void send_bad_request(
+    int clientFd,
+    std::string data);
 
-    static void sendNotFound(int clientFd, std::string data);
+void send_not_found(
+    int clientFd,
+    std::string data);
 
-    static void sendFile(
-        int clientFd,
-        FILE *fp,
-        std::string contentType,
-        size_t contentLength);
-
-private:
-    static void sendHeaders(int clientFd, std::string statusCode, std::string contentType, unsigned int contentLength);
-};
+void send_file(
+    int clientFd,
+    FILE *fp,
+    std::string contentType,
+    size_t contentLength);
 
 #endif

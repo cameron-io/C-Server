@@ -5,7 +5,56 @@
 
 #define BSIZE 1024
 
-void ResponseHandler::sendHeaders(
+void send_headers(int clientFd, std::string statusCode, std::string contentType, unsigned int contentLength);
+
+void send_ok(
+    int clientFd,
+    std::string contentType,
+    std::string data)
+{
+    send_headers(clientFd, "200 OK", contentType, data.length());
+    send(clientFd, data.c_str(), data.length(), 0);
+}
+
+void send_no_content(int clientFd)
+{
+    send_headers(clientFd, "204 No Content", "text/plain", 0);
+}
+
+void send_bad_request(
+    int clientFd,
+    std::string data)
+{
+    send_headers(clientFd, "400 Bad Request", "text/plain", data.length());
+    send(clientFd, data.c_str(), data.length(), 0);
+}
+
+void send_not_found(
+    int clientFd,
+    std::string data)
+{
+    send_headers(clientFd, "404 Not Found", "text/plain", data.length());
+    send(clientFd, data.c_str(), data.length(), 0);
+}
+
+void send_file(
+    int clientFd,
+    FILE *fp,
+    std::string contentType,
+    size_t contentLength)
+{
+    send_headers(clientFd, "200 OK", contentType, contentLength);
+
+    char buffer[BSIZE];
+    int r = fread(buffer, 1, BSIZE, fp);
+    while (r)
+    {
+        send(clientFd, buffer, r, 0);
+        r = fread(buffer, 1, BSIZE, fp);
+    }
+}
+
+void send_headers(
     int clientFd,
     std::string statusCode,
     std::string contentType,
@@ -30,51 +79,4 @@ void ResponseHandler::sendHeaders(
              contentLength,
              contentType.c_str());
     send(clientFd, buffer, strlen(buffer), 0);
-}
-
-void ResponseHandler::sendOk(
-    int clientFd,
-    std::string contentType,
-    std::string data)
-{
-    sendHeaders(clientFd, "200 OK", contentType, data.length());
-    send(clientFd, data.c_str(), data.length(), 0);
-}
-
-void ResponseHandler::sendNoContent(int clientFd)
-{
-    sendHeaders(clientFd, "204 No Content", "text/plain", 0);
-}
-
-void ResponseHandler::sendBadRequest(
-    int clientFd,
-    std::string data)
-{
-    sendHeaders(clientFd, "400 Bad Request", "text/plain", data.length());
-    send(clientFd, data.c_str(), data.length(), 0);
-}
-
-void ResponseHandler::sendNotFound(
-    int clientFd,
-    std::string data)
-{
-    sendHeaders(clientFd, "404 Not Found", "text/plain", data.length());
-    send(clientFd, data.c_str(), data.length(), 0);
-}
-
-void ResponseHandler::sendFile(
-    int clientFd,
-    FILE *fp,
-    std::string contentType,
-    size_t contentLength)
-{
-    sendHeaders(clientFd, "200 OK", contentType, contentLength);
-
-    char buffer[BSIZE];
-    int r = fread(buffer, 1, BSIZE, fp);
-    while (r)
-    {
-        send(clientFd, buffer, r, 0);
-        r = fread(buffer, 1, BSIZE, fp);
-    }
 }

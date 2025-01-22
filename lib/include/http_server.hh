@@ -35,29 +35,10 @@ constexpr int PORT = 8080;
 #define GETSOCKETERRNO() (errno)
 #endif
 
-class HttpServer
-{
-public:
-    SOCKET serverFd;
-
-    HttpServer()
-    {
-        this->createSocket();
-        this->bindSocket();
-        this->listenSocket();
-    }
-    ~HttpServer()
-    {
-        CLOSESOCKET(serverFd);
-    }
-
-    SOCKET acceptConnection();
-    void readRequest(SOCKET clientFd);
-
-private:
-    SOCKET createSocket();
-    void bindSocket();
-    void listenSocket();
-};
+SOCKET http_server_init();
+SOCKET http_server_get_socket();
+void http_server_stop();
+SOCKET http_server_accept_connection();
+void http_server_read_request(SOCKET clientFd);
 
 #endif
