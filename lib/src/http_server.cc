@@ -74,11 +74,39 @@ namespace HttpServer
         while (true)
         {
             int bytesRead = recv(clientFd, input_buffer, sizeof(input_buffer), 0);
+#ifdef _WIN32
+
+            if (SOCKET_ERROR == bytesRead)
+            {
+                if (WSAEWOULDBLOCK == WSAGetLastError())
+                {
+                    continue;
+                }
+                else if (WSAECONNRESET == WSAGetLastError())
+                {
+                    printf("Client: connection reset.\n");
+                    break;
+                }
+                else if (WSAECONNABORTED == WSAGetLastError())
+                {
+                    printf("Client: connection aborted.\n");
+                    break;
+                }
+                else
+                {
+                    ERR("recv");
+                    break;
+                }
+            }
+            printf("Client: recvd %d bytes\n", bytesRead);
+
+#endif
             if (bytesRead <= 0)
             {
                 break;
             }
-            ReqHandler::Handle(clientFd, input_buffer);
+            int bytesSent = ReqHandler::Handle(clientFd, input_buffer);
+            printf("Client: sent %d bytes\n", bytesSent);
         }
 
         CLOSESOCKET(clientFd);

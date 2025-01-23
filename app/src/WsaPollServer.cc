@@ -1,47 +1,18 @@
-#ifdef _IA64_
-#pragma warning(disable : 4311)
-#pragma warning(disable : 4312)
-#endif
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <mstcpip.h>
-#pragma comment(lib, "ws2_32.lib")
 #include <stdio.h>
-
+#include <thread>
+#include "http_server.hh"
 #include "request_handler.hh"
-
-#define ERR(e) \
-    printf("%s:%s failed: %d [%s@%ld]\n", __FUNCTION__, e, WSAGetLastError(), __FILE__, __LINE__)
-
-#define CLOSESOCK(s)         \
-    if (INVALID_SOCKET != s) \
-    {                        \
-        closesocket(s);      \
-        s = INVALID_SOCKET;  \
-    }
-
-#define DEFAULT_WAIT 30000
-
-#define WS_VER 0x0202
-
-#define DEFAULT_PORT 8080
-
-#define TST_MSG "HTTP/1.1 200 OK\r\n"    \
-                "Connection: close\r\n"  \
-                "Content-Length: 12\r\n" \
-                "\r\n"                   \
-                "Hello there!"
 
 HANDLE hCloseSignal = NULL;
 
-int handleRequest(SOCKET asock, char *buf)
+void HandleRequestAsync(SOCKET asock)
 {
-    return ReqHandler::Handle(asock, buf);
+    std::thread clientThread(
+        [asock]()
+        {
+            HttpServer::ReadRequest(asock);
+        });
+    clientThread.detach();
 }
 
 int __cdecl main()
@@ -55,7 +26,6 @@ int __cdecl main()
     SOCKADDR_STORAGE addr = {0};
     WSAPOLLFD fdarray = {0};
     ULONG uNonBlockingMode = 1;
-    CHAR buf[MAX_PATH] = {0};
     DWORD dwThreadId = 0;
 
     __try
@@ -142,28 +112,6 @@ int __cdecl main()
                         ERR("accept");
                         __leave;
                     }
-
-                    while (SOCKET_ERROR == (ret = recv(asock,
-                                                       buf,
-                                                       sizeof(buf),
-                                                       0)))
-                    {
-                        if (WSAEWOULDBLOCK == WSAGetLastError())
-                        {
-                            continue;
-                        }
-                        else if (WSAECONNRESET == WSAGetLastError())
-                        {
-                            printf("Client disconnected.\n");
-                            continue;
-                        }
-                        else
-                        {
-                            ERR("recv");
-                            __leave;
-                        }
-                    }
-                    printf("Main: recvd %d bytes\n", ret);
                 }
             }
 
@@ -181,7 +129,7 @@ int __cdecl main()
                 */
                 if (WSAENOTSOCK == WSAGetLastError())
                 {
-                    printf("Client disconnected.\n");
+                    printf("Main: Client disconnected.\n");
                     continue;
                 }
                 ERR("WSAPoll");
@@ -192,12 +140,7 @@ int __cdecl main()
             {
                 if (fdarray.revents & POLLWRNORM)
                 {
-                    /*
-                        Instructs client to close the connection upon
-                        completing HTTP transaction.
-                    */
-                    int bytesSent = handleRequest(asock, buf);
-                    printf("Main: sent %d bytes\n", bytesSent);
+                    HandleRequestAsync(asock);
                 }
             }
 
@@ -207,8 +150,8 @@ int __cdecl main()
     __finally
     {
         CloseHandle(hCloseSignal);
-        CLOSESOCK(asock);
-        CLOSESOCK(lsock);
+        CLOSESOCKET(asock);
+        CLOSESOCKET(lsock);
         if (nStartup)
             WSACleanup();
     }
