@@ -3,7 +3,7 @@
 setlocal
 FOR /F "eol=# tokens=*" %%i IN (%~dp0.env) DO SET %%i
 
-set "n=5"
+set "n=%1"
 set "counter=1"
 
 :loop_start 
