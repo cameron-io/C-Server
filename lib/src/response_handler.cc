@@ -8,56 +8,62 @@ namespace ResHandler
 
 #define BSIZE 1024
 
-    void SendHeaders(int clientFd, std::string statusCode, std::string contentType, unsigned int contentLength);
+    std::string SetHeaders(int clientFd, std::string statusCode, std::string contentType, unsigned int contentLength);
 
-    void SendOK(
+    int SendOK(
         int clientFd,
         std::string contentType,
         std::string data)
     {
-        SendHeaders(clientFd, "200 OK", contentType, data.length());
-        send(clientFd, data.c_str(), data.length(), 0);
+        std::string headers = SetHeaders(clientFd, "200 OK", contentType, data.length());
+        std::string payload = headers + data;
+        return send(clientFd, payload.c_str(), payload.length(), 0);
     }
 
-    void SendNoContent(int clientFd)
+    int SendNoContent(int clientFd)
     {
-        SendHeaders(clientFd, "204 No Content", "text/plain", 0);
+        std::string payload = SetHeaders(clientFd, "204 No Content", "text/plain", 0);
+        return send(clientFd, payload.c_str(), payload.length(), 0);
     }
 
-    void SendBadRequest(
+    int SendBadRequest(
         int clientFd,
         std::string data)
     {
-        SendHeaders(clientFd, "400 Bad Request", "text/plain", data.length());
-        send(clientFd, data.c_str(), data.length(), 0);
+        std::string headers = SetHeaders(clientFd, "400 Bad Request", "text/plain", data.length());
+        std::string payload = headers + data;
+        return send(clientFd, payload.c_str(), payload.length(), 0);
     }
 
-    void SendNotFound(
+    int SendNotFound(
         int clientFd,
         std::string data)
     {
-        SendHeaders(clientFd, "404 Not Found", "text/plain", data.length());
-        send(clientFd, data.c_str(), data.length(), 0);
+        std::string headers = SetHeaders(clientFd, "404 Not Found", "text/plain", data.length());
+        std::string payload = headers + data;
+        return send(clientFd, payload.c_str(), payload.length(), 0);
     }
 
-    void SendFile(
+    int SendFile(
         int clientFd,
         FILE *fp,
         std::string contentType,
         size_t contentLength)
     {
-        SendHeaders(clientFd, "200 OK", contentType, contentLength);
+        std::string headers = SetHeaders(clientFd, "200 OK", contentType, contentLength);
+        int bytesSent = send(clientFd, headers.c_str(), headers.length(), 0);
 
         char buffer[BSIZE];
         int r = fread(buffer, 1, BSIZE, fp);
         while (r)
         {
-            send(clientFd, buffer, r, 0);
+            bytesSent += send(clientFd, buffer, r, 0);
             r = fread(buffer, 1, BSIZE, fp);
         }
+        return bytesSent;
     }
 
-    void SendHeaders(
+    std::string SetHeaders(
         int clientFd,
         std::string statusCode,
         std::string contentType,
@@ -81,6 +87,6 @@ namespace ResHandler
                  statusCode.c_str(),
                  contentLength,
                  contentType.c_str());
-        send(clientFd, buffer, strlen(buffer), 0);
+        return buffer;
     }
 }

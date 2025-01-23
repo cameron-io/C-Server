@@ -12,9 +12,9 @@ namespace ReqHandler
 
     std::string ParseMethod(std::string request);
     std::string GetContentType(std::string path);
-    void ServeResource(SOCKET clientFd, std::string path);
+    int ServeResource(SOCKET clientFd, std::string path);
 
-    void Handle(SOCKET clientFd, std::string req)
+    int Handle(SOCKET clientFd, std::string req)
     {
         std::string method = ParseMethod(req);
 
@@ -24,7 +24,7 @@ namespace ReqHandler
             size_t endIndex = path.find(" ");
             if (endIndex == std::string::npos)
             {
-                ResHandler::SendBadRequest(clientFd, "Invalid path.");
+                return ResHandler::SendBadRequest(clientFd, "Invalid path.");
             }
             else
             {
@@ -35,34 +35,29 @@ namespace ReqHandler
         }
         else if (method == "POST")
         {
-            ResHandler::SendNoContent(clientFd);
+            return ResHandler::SendNoContent(clientFd);
         }
         else if (method == "OPTIONS")
         {
             // Handle CORS pre-flight
-            ResHandler::SendNoContent(clientFd);
+            return ResHandler::SendNoContent(clientFd);
         }
-        else
-        {
-            ResHandler::SendBadRequest(clientFd, "Unsupported Request.");
-        }
+        return ResHandler::SendBadRequest(clientFd, "Unsupported Request.");
     }
 
-    void ServeResource(SOCKET clientFd, std::string path)
+    int ServeResource(SOCKET clientFd, std::string path)
     {
         if (path == "/")
             path = "/index.html";
 
         if (path.length() > 100)
         {
-            ResHandler::SendBadRequest(clientFd, "Path size too large.");
-            return;
+            return ResHandler::SendBadRequest(clientFd, "Path size too large.");
         }
 
         if (path.find("..") != std::string::npos)
         {
-            ResHandler::SendBadRequest(clientFd, "Path navigation not permitted.");
-            return;
+            return ResHandler::SendBadRequest(clientFd, "Path navigation not permitted.");
         }
 
         const int pathSize = 128;
@@ -82,8 +77,7 @@ namespace ReqHandler
         FILE *fp = fopen(fullPath, "rb");
         if (!fp)
         {
-            ResHandler::SendNotFound(clientFd, "Could not locate resource.");
-            return;
+            return ResHandler::SendNotFound(clientFd, "Could not locate resource.");
         }
 
         // Read File Contents
@@ -93,9 +87,11 @@ namespace ReqHandler
 
         // Send File Contents
         std::string contentType = GetContentType(fullPath);
-        ResHandler::SendFile(clientFd, fp, contentType.c_str(), contentLength);
+        int bytesSent = ResHandler::SendFile(clientFd, fp, contentType.c_str(), contentLength);
 
         fclose(fp);
+
+        return bytesSent;
     }
 
     std::string GetContentType(std::string path)

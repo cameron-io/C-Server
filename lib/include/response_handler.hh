@@ -7,22 +7,22 @@
 namespace ResHandler
 {
 
-    void SendOK(
+    int SendOK(
         int clientFd,
         std::string contentType,
         std::string data);
 
-    void SendNoContent(int clientFd);
+    int SendNoContent(int clientFd);
 
-    void SendBadRequest(
+    int SendBadRequest(
         int clientFd,
         std::string data);
 
-    void SendNotFound(
+    int SendNotFound(
         int clientFd,
         std::string data);
 
-    void SendFile(
+    int SendFile(
         int clientFd,
         FILE *fp,
         std::string contentType,

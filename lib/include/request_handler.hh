@@ -6,7 +6,7 @@
 
 namespace ReqHandler
 {
-    void Handle(SOCKET clientFd, std::string request);
+    int Handle(SOCKET clientFd, std::string request);
 }
 
 #endif
