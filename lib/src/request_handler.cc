@@ -8,7 +8,7 @@
 namespace ReqHandler
 {
 
-#define BASE_PATH "static"
+#define BASE_PATH "public"
 
     std::string ParseMethod(std::string request);
     std::string GetContentType(std::string path);
