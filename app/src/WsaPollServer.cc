@@ -13,6 +13,8 @@
 #pragma comment(lib, "ws2_32.lib")
 #include <stdio.h>
 
+#include "request_handler.hh"
+
 #define ERR(e) \
     printf("%s:%s failed: %d [%s@%ld]\n", __FUNCTION__, e, WSAGetLastError(), __FILE__, __LINE__)
 
@@ -33,9 +35,14 @@
                 "Connection: close\r\n"  \
                 "Content-Length: 12\r\n" \
                 "\r\n"                   \
-                "Hello World!"
+                "Hello there!"
 
 HANDLE hCloseSignal = NULL;
+
+void handleRequest(SOCKET asock, char *buf)
+{
+    ReqHandler::Handle(asock, buf);
+}
 
 DWORD WINAPI ConnectThread(LPVOID pParam)
 {
@@ -261,20 +268,26 @@ int __cdecl main()
                         __leave;
                     }
 
-                    if (SOCKET_ERROR == (ret = recv(asock,
-                                                    buf,
-                                                    sizeof(buf),
-                                                    0)))
+                    while (SOCKET_ERROR == (ret = recv(asock,
+                                                       buf,
+                                                       sizeof(buf),
+                                                       0)))
                     {
-                        int ierr = WSAGetLastError();
-                        if (ierr != WSAEWOULDBLOCK)
+                        if (WSAEWOULDBLOCK == WSAGetLastError())
+                        {
+                            continue;
+                        }
+                        else if (WSAECONNRESET == WSAGetLastError())
+                        {
+                            printf("Client disconnected.\n");
+                        }
+                        else
                         {
                             ERR("recv");
                             __leave;
                         }
                     }
-                    else
-                        printf("Main: recvd %d bytes\n", ret);
+                    printf("Main: recvd %d bytes\n", ret);
                 }
             }
 
@@ -295,16 +308,7 @@ int __cdecl main()
             {
                 if (fdarray.revents & POLLWRNORM)
                 {
-                    if (SOCKET_ERROR == (ret = send(asock,
-                                                    TST_MSG,
-                                                    sizeof(TST_MSG),
-                                                    0)))
-                    {
-                        ERR("send");
-                        __leave;
-                    }
-                    else
-                        printf("Main: sent %d bytes\n", ret);
+                    handleRequest(asock, buf);
                 }
             }
 
