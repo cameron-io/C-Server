@@ -39,124 +39,9 @@
 
 HANDLE hCloseSignal = NULL;
 
-void handleRequest(SOCKET asock, char *buf)
+int handleRequest(SOCKET asock, char *buf)
 {
-    ReqHandler::Handle(asock, buf);
-}
-
-DWORD WINAPI ConnectThread(LPVOID pParam)
-{
-    WSAPOLLFD fdarray = {0};
-    SOCKET csock = INVALID_SOCKET;
-    SOCKADDR_STORAGE addrLoopback = {0};
-    INT ret = 0;
-    ULONG uNonBlockingMode = 1;
-    CHAR buf[MAX_PATH] = {0};
-
-    UNREFERENCED_PARAMETER(pParam);
-
-    __try
-    {
-        if (INVALID_SOCKET == (csock = socket(AF_INET,
-                                              SOCK_STREAM,
-                                              0)))
-        {
-            ERR("socket");
-            __leave;
-        }
-
-        if (SOCKET_ERROR == ioctlsocket(csock,
-                                        FIONBIO,
-                                        &uNonBlockingMode))
-        {
-            ERR("FIONBIO");
-            __leave;
-        }
-
-        addrLoopback.ss_family = AF_INET;
-        INETADDR_SETLOOPBACK((SOCKADDR *)&addrLoopback);
-        SS_PORT((SOCKADDR *)&addrLoopback) = htons(DEFAULT_PORT);
-
-        if (SOCKET_ERROR == connect(csock,
-                                    (SOCKADDR *)&addrLoopback,
-                                    sizeof(addrLoopback)))
-        {
-            if (WSAEWOULDBLOCK != WSAGetLastError())
-            {
-                ERR("connect");
-                __leave;
-            }
-        }
-
-        // Call WSAPoll for writeability on connecting socket
-        fdarray.fd = csock;
-        fdarray.events = POLLWRNORM;
-
-        if (SOCKET_ERROR == (ret = WSAPoll(&fdarray,
-                                           1,
-                                           DEFAULT_WAIT)))
-        {
-            ERR("WSAPoll");
-            __leave;
-        }
-
-        if (ret)
-        {
-            if (fdarray.revents & POLLWRNORM)
-            {
-                printf("ConnectThread: Established connection\n");
-
-                // Send data
-
-                if (SOCKET_ERROR == (ret = send(csock,
-                                                TST_MSG,
-                                                sizeof(TST_MSG),
-                                                0)))
-                {
-                    ERR("send");
-                    __leave;
-                }
-                else
-                    printf("ConnectThread: sent %d bytes\n", ret);
-            }
-        }
-
-        // Call WSAPoll for readability on connected socket
-        fdarray.events = POLLRDNORM;
-
-        if (SOCKET_ERROR == (ret = WSAPoll(&fdarray,
-                                           1,
-                                           DEFAULT_WAIT)))
-        {
-            ERR("WSAPoll");
-            __leave;
-        }
-
-        if (ret)
-        {
-            if (fdarray.revents & POLLRDNORM)
-            {
-                if (SOCKET_ERROR == (ret = recv(csock,
-                                                buf,
-                                                sizeof(buf),
-                                                0)))
-                {
-                    ERR("recv");
-                    __leave;
-                }
-                else
-                    printf("ConnectThread: recvd %d bytes\n", ret);
-            }
-        }
-
-        WaitForSingleObject(hCloseSignal, DEFAULT_WAIT);
-    }
-    __finally
-    {
-        CLOSESOCK(csock);
-    }
-
-    return 0;
+    return ReqHandler::Handle(asock, buf);
 }
 
 int __cdecl main()
@@ -171,7 +56,6 @@ int __cdecl main()
     WSAPOLLFD fdarray = {0};
     ULONG uNonBlockingMode = 1;
     CHAR buf[MAX_PATH] = {0};
-    HANDLE hThread = NULL;
     DWORD dwThreadId = 0;
 
     __try
@@ -192,17 +76,6 @@ int __cdecl main()
                                                 NULL)))
         {
             ERR("CreateEvent");
-            __leave;
-        }
-
-        if (NULL == (hThread = CreateThread(NULL,
-                                            0,
-                                            ConnectThread,
-                                            NULL,
-                                            0,
-                                            &dwThreadId)))
-        {
-            ERR("CreateThread");
             __leave;
         }
 
@@ -308,19 +181,19 @@ int __cdecl main()
             {
                 if (fdarray.revents & POLLWRNORM)
                 {
-                    handleRequest(asock, buf);
+                    int bytesSent = handleRequest(asock, buf);
+                    printf("Main: sent %d bytes\n", bytesSent);
+                    Sleep(1000);
+                    CLOSESOCK(asock);
                 }
             }
 
             SetEvent(hCloseSignal);
-
-            WaitForSingleObject(hThread, DEFAULT_WAIT);
         }
     }
     __finally
     {
         CloseHandle(hCloseSignal);
-        CloseHandle(hThread);
         CLOSESOCK(asock);
         CLOSESOCK(lsock);
         if (nStartup)
