@@ -1,4 +1,5 @@
 #include <thread>
+#include "cli.hh"
 #include "http_server.hh"
 #include "request_handler.hh"
 
@@ -19,7 +20,8 @@ int __cdecl main()
     WSADATA wsd;
     INT nStartup = 0,
         nErr = 0,
-        ret = 0;
+        ret = 0,
+        keepRunning = 1;
     SOCKET lsock = INVALID_SOCKET,
            asock = INVALID_SOCKET;
     SOCKADDR_STORAGE addr = {0};
@@ -84,7 +86,9 @@ int __cdecl main()
 
         printf("Listening on port: %d\n", DEFAULT_PORT);
 
-        while (1)
+        CLI::StartReplAsync(&keepRunning);
+
+        while (keepRunning)
         {
             fdarray.fd = lsock;
             fdarray.events = POLLRDNORM;
@@ -125,6 +129,7 @@ int __cdecl main()
         CLOSESOCKET(lsock);
         if (nStartup)
             WSACleanup();
+        std::cout << "Finished." << std::endl;
     }
 
     return 0;

@@ -3,39 +3,16 @@
 #include <string.h>
 #include <stdlib.h>
 #include <signal.h>
+#include "cli.hh"
 #include "http_server.hh"
 #include "event_manager.hh"
 #include "request_handler.hh"
 #include "response_handler.hh"
 
-void IntHandler(int sig)
-{
-    char c;
-
-    signal(sig, SIG_IGN);
-    printf("\nDo you really want to quit? [y/n] ");
-    c = getchar();
-    if (c == 'y' || c == 'Y')
-    {
-        printf("Shutting down...\n");
-        HttpServer::Stop();
-
-#if defined(_WIN32)
-        WSACleanup();
-#endif
-
-        printf("Finished.\n");
-
-        exit(0);
-    }
-    signal(SIGINT, IntHandler);
-    getchar();
-}
-
 int main()
 {
 #ifdef _WIN32
-    signal(SIGINT, IntHandler);
+    signal(SIGINT, CLI::IntHandler);
 #else
     struct sigaction sigIntHandler;
     sigIntHandler.sa_handler = IntHandler;
