@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <thread>
 #include "http_server.hh"
 #include "request_handler.hh"
@@ -85,7 +84,6 @@ int __cdecl main()
 
         printf("Listening on port: %d\n", DEFAULT_PORT);
 
-        // Call WSAPoll for readability of listener (accepted)
         while (1)
         {
             fdarray.fd = lsock;
@@ -112,34 +110,7 @@ int __cdecl main()
                         ERR("accept");
                         __leave;
                     }
-                }
-            }
 
-            // Call WSAPoll for writeability of accepted
-
-            fdarray.fd = asock;
-            fdarray.events = POLLWRNORM;
-
-            if (SOCKET_ERROR == (ret = WSAPoll(&fdarray,
-                                               1,
-                                               DEFAULT_WAIT)))
-            {
-                /*
-                    Handle disconnects before Writing Response
-                */
-                if (WSAENOTSOCK == WSAGetLastError())
-                {
-                    printf("Main: Client disconnected.\n");
-                    continue;
-                }
-                ERR("WSAPoll");
-                __leave;
-            }
-
-            if (ret)
-            {
-                if (fdarray.revents & POLLWRNORM)
-                {
                     HandleRequestAsync(asock);
                 }
             }
