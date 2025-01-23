@@ -173,6 +173,14 @@ int __cdecl main()
                                                1,
                                                DEFAULT_WAIT)))
             {
+                /*
+                    Handle disconnects before Writing Response
+                */
+                if (WSAENOTSOCK == WSAGetLastError())
+                {
+                    printf("Client disconnected.\n");
+                    continue;
+                }
                 ERR("WSAPoll");
                 __leave;
             }
