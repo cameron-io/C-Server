@@ -113,6 +113,8 @@ int __cdecl main()
             __leave;
         }
 
+        printf("Listening on port: %d\n", DEFAULT_PORT);
+
         // Call WSAPoll for readability of listener (accepted)
         while (1)
         {
@@ -153,6 +155,7 @@ int __cdecl main()
                         else if (WSAECONNRESET == WSAGetLastError())
                         {
                             printf("Client disconnected.\n");
+                            continue;
                         }
                         else
                         {
