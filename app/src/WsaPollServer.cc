@@ -189,10 +189,12 @@ int __cdecl main()
             {
                 if (fdarray.revents & POLLWRNORM)
                 {
+                    /*
+                        Instructs client to close the connection upon
+                        completing HTTP transaction.
+                    */
                     int bytesSent = handleRequest(asock, buf);
                     printf("Main: sent %d bytes\n", bytesSent);
-                    Sleep(1000);
-                    CLOSESOCK(asock);
                 }
             }
 
