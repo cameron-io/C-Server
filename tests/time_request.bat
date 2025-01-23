@@ -1,7 +1,7 @@
 @echo off
 
 setlocal
-FOR /F "eol=# tokens=*" %%i IN (%~dp0.env) DO SET %%i
+FOR /F "eol=# tokens=*" %%i IN (%~dp0\..\.env) DO SET %%i
 
 set "n=%1"
 set "counter=1"
