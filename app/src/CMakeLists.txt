@@ -6,3 +6,6 @@ target_link_libraries(HttpServer HttpServerLib)
 
 add_executable(WsaPollServer WsaPollServer.cc)
 target_link_libraries(WsaPollServer HttpServerLib)
+
+add_executable(IocpServer IocpServer.cc)
+target_link_libraries(IocpServer HttpServerLib)
