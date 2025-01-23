@@ -3,8 +3,7 @@
 Using the C 23 standard.
 
 ### Requirements
-- Apple clang version 16.0.0 (clang-1600.0.26.4)
-- cmake version 3.31.2
+- cmake version >= 3.29
 - ninja 1.12.1
 
 ### Install Dependencies
@@ -16,17 +15,22 @@ brew install cmake ninja
 
 ### Usage
 
-Windows:
+Windows (WSAPoll):
 ```
 .\build.bat
-.\.bin\Windows64\bin\Release\http_server.exe
+.\.bin\Windows64\bin\Release\WsaPollServer.exe
 ```
 
-Unix:
+Unix (Select()):
 
 ```
 make compile
-make run APP=<BINARY>
+make run APP=HttpServer
+```
+
+Alpine Linux - Container (EPoll):
+```
+make dev
 ```
 
 ### Testing
