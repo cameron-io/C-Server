@@ -22,6 +22,8 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+include(FetchContent)
+
 include(CTest)
 enable_testing()
 
