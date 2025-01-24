@@ -16,8 +16,8 @@ int main()
 #else
     struct sigaction sigIntHandler;
     sigIntHandler.sa_handler = CLI::IntHandler;
-    sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
+    sigemptyset(&sigIntHandler.sa_mask);
 
     sigaction(SIGINT, &sigIntHandler, NULL);
 #endif
