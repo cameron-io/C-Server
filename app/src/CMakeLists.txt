@@ -8,7 +8,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(libuv)
 
-add_executable(LibUvServer libuv_tcp/main.cc)
+add_executable(LibUvServer libuv/main.cc)
 target_link_libraries(LibUvServer libuv::libuv)
 
 add_executable(HttpServer multi_platform/main.cc)
