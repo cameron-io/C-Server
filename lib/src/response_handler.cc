@@ -8,21 +8,21 @@ namespace ResHandler
 
 #define BSIZE 1024
 
-    std::string SetHeaders(int clientFd, std::string statusCode, std::string contentType, unsigned int contentLength);
+    std::string SetHeaders(std::string statusCode, std::string contentType, unsigned int contentLength);
 
     int SendOK(
         int clientFd,
         std::string contentType,
         std::string data)
     {
-        std::string headers = SetHeaders(clientFd, "200 OK", contentType, data.length());
+        std::string headers = SetHeaders("200 OK", contentType, data.length());
         std::string payload = headers + data;
         return send(clientFd, payload.c_str(), payload.length(), 0);
     }
 
     int SendNoContent(int clientFd)
     {
-        std::string payload = SetHeaders(clientFd, "204 No Content", "text/plain", 0);
+        std::string payload = SetHeaders("204 No Content", "text/plain", 0);
         return send(clientFd, payload.c_str(), payload.length(), 0);
     }
 
@@ -30,7 +30,7 @@ namespace ResHandler
         int clientFd,
         std::string data)
     {
-        std::string headers = SetHeaders(clientFd, "400 Bad Request", "text/plain", data.length());
+        std::string headers = SetHeaders("400 Bad Request", "text/plain", data.length());
         std::string payload = headers + data;
         return send(clientFd, payload.c_str(), payload.length(), 0);
     }
@@ -39,7 +39,7 @@ namespace ResHandler
         int clientFd,
         std::string data)
     {
-        std::string headers = SetHeaders(clientFd, "404 Not Found", "text/plain", data.length());
+        std::string headers = SetHeaders("404 Not Found", "text/plain", data.length());
         std::string payload = headers + data;
         return send(clientFd, payload.c_str(), payload.length(), 0);
     }
@@ -50,7 +50,7 @@ namespace ResHandler
         std::string contentType,
         size_t contentLength)
     {
-        std::string headers = SetHeaders(clientFd, "200 OK", contentType, contentLength);
+        std::string headers = SetHeaders("200 OK", contentType, contentLength);
         int bytesSent = send(clientFd, headers.c_str(), headers.length(), 0);
 
         char buffer[BSIZE];
@@ -64,7 +64,6 @@ namespace ResHandler
     }
 
     std::string SetHeaders(
-        int clientFd,
         std::string statusCode,
         std::string contentType,
         unsigned int contentLength)

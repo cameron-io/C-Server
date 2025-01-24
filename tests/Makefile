@@ -1,7 +1,7 @@
 #!make
-include ../.env
+include .env
 
-CURL_FORMAT_CFG = curl-format.txt
+CURL_FORMAT_CFG = tests/curl-format.txt
 
 .PHONY: time_request
 time_request: $(CURL_FORMAT_CFG)

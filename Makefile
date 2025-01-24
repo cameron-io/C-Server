@@ -3,7 +3,7 @@ include .env
 
 OS_NAME = $(shell uname -s)
 OS_BITNESS = $(shell getconf LONG_BIT)
-BIN_PATH = $(BIN_DIR)/$(OS_NAME)$(OS_BITNESS)
+BIN_PATH = $(BIN_DIR)/$(OS_NAME)$(OS_BITNESS)/bin
 
 .PHONY: compile
 compile: $(SOURCE_DIRS)
@@ -12,7 +12,7 @@ compile: $(SOURCE_DIRS)
 
 .PHONY: run
 run: compile
-	./.bin/Linux64/bin/http_server $(ARGS)
+	./$(BIN_PATH)/HttpServer $(ARGS)
 
 .PHONY: test
 test: compile

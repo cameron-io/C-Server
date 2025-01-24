@@ -15,7 +15,7 @@ int main()
     signal(SIGINT, CLI::IntHandler);
 #else
     struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = IntHandler;
+    sigIntHandler.sa_handler = CLI::IntHandler;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
 

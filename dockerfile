@@ -9,4 +9,4 @@ RUN apk update && \
         curl
 ADD . .
 RUN make compile
-CMD make run APP=http_server
+CMD make run APP=HttpServer
