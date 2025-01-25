@@ -1,7 +1,19 @@
+#if defined(_WIN32)
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0A00
+#endif
+#include <winsock2.h>
+#pragma comment(lib, "ws2_32.lib")
+#else
+#include <unistd.h>
+#endif
+
 #include <uv.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include "server_callback.hh"
 #include "req_data.hh"
