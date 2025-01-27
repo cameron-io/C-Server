@@ -4,6 +4,6 @@
 #include <string>
 #include "core.hh"
 
-int HandleRequest(SOCKET clientFd, std::string request);
+std::string HandleRequest(std::string request);
 
 #endif

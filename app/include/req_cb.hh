@@ -4,7 +4,7 @@
 #include <uv.h>
 #include <stdlib.h>
 #include "req_data.hh"
-#include "res_content.hh"
+#include "req_handler.hh"
 
 /*
  *  Callback for when the TCP write is complete
@@ -39,7 +39,7 @@ static void process_command_cb(uv_work_t *req)
     char *x;
     data = (client_request_data *)req->data;
     // Do the actual time-consuming request processing here
-    data->response = strdup((char *)OK("text/plain", "Hello World!").c_str());
+    data->response = strdup((char *)HandleRequest(data->text).c_str());
 }
 
 #endif

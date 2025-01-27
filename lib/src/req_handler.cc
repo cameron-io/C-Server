@@ -2,16 +2,16 @@
 #include <string>
 #include <string.h>
 #include "req_handler.hh"
-#include "res_handler.hh"
+#include "res_content.hh"
 #include "core.hh"
 
 #define BASE_PATH "public"
 
 std::string ParseMethod(std::string request);
 std::string GetContentType(std::string path);
-int ServeResource(SOCKET clientFd, std::string path);
+std::string ServeResource(std::string path);
 
-int HandleRequest(SOCKET clientFd, std::string req)
+std::string HandleRequest(std::string req)
 {
     std::string method = ParseMethod(req);
 
@@ -21,40 +21,40 @@ int HandleRequest(SOCKET clientFd, std::string req)
         size_t endIndex = path.find(" ");
         if (endIndex == std::string::npos)
         {
-            return SendBadRequest(clientFd, "Invalid path.");
+            return BadRequest("Invalid path.");
         }
         else
         {
             // null terminate path
             path[endIndex] = 0;
-            ServeResource(clientFd, path.c_str());
+            return ServeResource(path.c_str());
         }
     }
     else if (method == "POST")
     {
-        return SendNoContent(clientFd);
+        return NoContent();
     }
     else if (method == "OPTIONS")
     {
         // Handle CORS pre-flight
-        return SendNoContent(clientFd);
+        return NoContent();
     }
-    return SendBadRequest(clientFd, "Unsupported Request.");
+    return BadRequest("Unsupported Request.");
 }
 
-int ServeResource(SOCKET clientFd, std::string path)
+std::string ServeResource(std::string path)
 {
     if (path == "/")
         path = "/index.html";
 
     if (path.length() > 100)
     {
-        return SendBadRequest(clientFd, "Path size too large.");
+        return BadRequest("Path size too large.");
     }
 
     if (path.find("..") != std::string::npos)
     {
-        return SendBadRequest(clientFd, "Path navigation not permitted.");
+        return BadRequest("Path navigation not permitted.");
     }
 
     const int pathSize = 128;
@@ -74,7 +74,7 @@ int ServeResource(SOCKET clientFd, std::string path)
     FILE *fp = fopen(fullPath, "rb");
     if (!fp)
     {
-        return SendNotFound(clientFd, "Could not locate resource.");
+        return NotFound("Could not locate resource.");
     }
 
     // Read File Contents
@@ -84,11 +84,13 @@ int ServeResource(SOCKET clientFd, std::string path)
 
     // Send File Contents
     std::string contentType = GetContentType(fullPath);
-    int bytesSent = SendFile(clientFd, fp, contentType.c_str(), contentLength);
+    std::string headers = SetHeaders("200 OK", contentType, contentLength);
+
+    std::string file_buffer = ReadFile(fp);
 
     fclose(fp);
 
-    return bytesSent;
+    return headers + file_buffer;
 }
 
 std::string GetContentType(std::string path)
