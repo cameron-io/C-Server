@@ -3,10 +3,10 @@
 #define BSIZE 1024
 
 std::string ok(
-    std::string contentType,
+    std::string content_type,
     std::string data)
 {
-    std::string headers = set_headers("200 ok", contentType, data.length());
+    std::string headers = set_headers("200 ok", content_type, data.length());
     return headers + data;
 }
 
@@ -40,9 +40,9 @@ std::string read_file(
 }
 
 std::string set_headers(
-    std::string statusCode,
-    std::string contentType,
-    unsigned int contentLength)
+    std::string status_code,
+    std::string content_type,
+    unsigned int content_length)
 {
     const char *headers =
         "HTTP/1.1 %s\r\n"
@@ -59,8 +59,8 @@ std::string set_headers(
 
     char buffer[BSIZE];
     snprintf(buffer, BSIZE, headers,
-             statusCode.c_str(),
-             contentLength,
-             contentType.c_str());
+             status_code.c_str(),
+             content_length,
+             content_type.c_str());
     return buffer;
 }

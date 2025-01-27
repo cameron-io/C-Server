@@ -51,12 +51,12 @@ int main()
 #ifdef _WIN32
     signal(SIGINT, int_handler);
 #else
-    struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = int_handler;
-    sigIntHandler.sa_flags = 0;
-    sigemptyset(&sigIntHandler.sa_mask);
+    struct sigaction sig_int_handler;
+    sig_int_handler.sa_handler = int_handler;
+    sig_int_handler.sa_flags = 0;
+    sigemptyset(&sig_int_handler.sa_mask);
 
-    sigaction(SIGINT, &sigIntHandler, NULL);
+    sigaction(SIGINT, &sig_int_handler, NULL);
 #endif
 
     loop = uv_default_loop();

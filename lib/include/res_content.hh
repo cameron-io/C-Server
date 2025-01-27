@@ -3,10 +3,10 @@
 
 #include <string>
 
-std::string set_headers(std::string statusCode, std::string contentType, unsigned int contentLength);
+std::string set_headers(std::string status_code, std::string content_type, unsigned int content_length);
 
 std::string ok(
-    std::string contentType,
+    std::string content_type,
     std::string data);
 
 std::string no_content();

@@ -18,15 +18,15 @@ std::string handle_request(std::string req)
     if (method == "GET")
     {
         std::string path = req.substr(4, req.length() - 4);
-        size_t endIndex = path.find(" ");
-        if (endIndex == std::string::npos)
+        size_t end_index = path.find(" ");
+        if (end_index == std::string::npos)
         {
             return bad_request("Invalid path.");
         }
         else
         {
             // null terminate path
-            path[endIndex] = 0;
+            path[end_index] = 0;
             return serve_resource(path.c_str());
         }
     }
@@ -57,12 +57,12 @@ std::string serve_resource(std::string path)
         return bad_request("Path navigation not permitted.");
     }
 
-    const int pathSize = 128;
-    char fullPath[pathSize];
-    snprintf(fullPath, pathSize, "%s%s", BASE_PATH, path.c_str());
+    const int path_size = 128;
+    char full_path[path_size];
+    snprintf(full_path, path_size, "%s%s", BASE_PATH, path.c_str());
 
 #if defined(_WIN32)
-    char *p = fullPath;
+    char *p = full_path;
     while (*p)
     {
         if (*p == '/')
@@ -71,7 +71,7 @@ std::string serve_resource(std::string path)
     }
 #endif
 
-    FILE *fp = fopen(fullPath, "rb");
+    FILE *fp = fopen(full_path, "rb");
     if (!fp)
     {
         return not_found("Could not locate resource.");
@@ -79,12 +79,12 @@ std::string serve_resource(std::string path)
 
     // Read File Contents
     fseek(fp, 0L, SEEK_END);
-    size_t contentLength = ftell(fp);
+    size_t content_length = ftell(fp);
     rewind(fp);
 
     // Send File Contents
-    std::string contentType = get_content_type(fullPath);
-    std::string headers = set_headers("200 ok", contentType, contentLength);
+    std::string content_type = get_content_type(full_path);
+    std::string headers = set_headers("200 ok", content_type, content_length);
 
     std::string file_buffer = read_file(fp);
 
@@ -95,38 +95,38 @@ std::string serve_resource(std::string path)
 
 std::string get_content_type(std::string path)
 {
-    size_t lastDotIndex = path.rfind('.');
-    if (lastDotIndex != std::string::npos)
+    size_t last_dot_index = path.rfind('.');
+    if (last_dot_index != std::string::npos)
     {
-        std::string lastDot = path.substr(lastDotIndex, path.length() - lastDotIndex);
+        std::string last_dot = path.substr(last_dot_index, path.length() - last_dot_index);
 
-        if (lastDot == ".css")
+        if (last_dot == ".css")
             return "text/css";
-        if (lastDot == ".csv")
+        if (last_dot == ".csv")
             return "text/csv";
-        if (lastDot == ".gif")
+        if (last_dot == ".gif")
             return "image/gif";
-        if (lastDot == ".htm")
+        if (last_dot == ".htm")
             return "text/html";
-        if (lastDot == ".html")
+        if (last_dot == ".html")
             return "text/html";
-        if (lastDot == ".ico")
+        if (last_dot == ".ico")
             return "image/x-icon";
-        if (lastDot == ".jpeg")
+        if (last_dot == ".jpeg")
             return "image/jpeg";
-        if (lastDot == ".jpg")
+        if (last_dot == ".jpg")
             return "image/jpeg";
-        if (lastDot == ".js")
+        if (last_dot == ".js")
             return "application/javascript";
-        if (lastDot == ".json")
+        if (last_dot == ".json")
             return "application/json";
-        if (lastDot == ".png")
+        if (last_dot == ".png")
             return "image/png";
-        if (lastDot == ".pdf")
+        if (last_dot == ".pdf")
             return "application/pdf";
-        if (lastDot == ".svg")
+        if (last_dot == ".svg")
             return "image/svg+xml";
-        if (lastDot == ".txt")
+        if (last_dot == ".txt")
             return "text/plain";
     }
 

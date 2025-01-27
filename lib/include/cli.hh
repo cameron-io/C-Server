@@ -7,10 +7,10 @@
 #include <signal.h>
 #include "core.hh"
 
-void start_repl_async(int *keepRunning)
+void start_repl_async(int *keep_running)
 {
-    std::thread clientThread(
-        [keepRunning]()
+    std::thread client_thread(
+        [keep_running]()
         {
             std::string userInput;
 
@@ -44,12 +44,12 @@ void start_repl_async(int *keepRunning)
                 }
             }
 
-            *keepRunning = 0;
+            *keep_running = 0;
 
             std::cout << std::endl
                       << "Shutting down..." << std::endl;
         });
-    clientThread.detach();
+    client_thread.detach();
 }
 
 #endif
