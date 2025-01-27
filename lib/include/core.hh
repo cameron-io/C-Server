@@ -1,5 +1,5 @@
-#ifndef HTTP_SERVER_H
-#define HTTP_SERVER_H
+#ifndef CORE_H
+#define CORE_H
 
 constexpr int MAX_CLIENTS = 10;
 constexpr int PORT = 8080;
@@ -54,12 +54,4 @@ constexpr int PORT = 8080;
 #define GETSOCKETERRNO() (errno)
 #endif
 
-namespace HttpServer
-{
-    SOCKET Init();
-    SOCKET GetSocket();
-    void Stop();
-    SOCKET AcceptConnection();
-    void ReadRequest(SOCKET clientFd);
-}
 #endif

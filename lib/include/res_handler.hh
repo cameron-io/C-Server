@@ -3,24 +3,25 @@
 
 #include <iostream>
 #include <string>
+#include "core.hh"
 
 int SendOK(
-    int clientFd,
+    SOCKET clientFd,
     std::string contentType,
     std::string data);
 
-int SendNoContent(int clientFd);
+int SendNoContent(SOCKET clientFd);
 
 int SendBadRequest(
-    int clientFd,
+    SOCKET clientFd,
     std::string data);
 
 int SendNotFound(
-    int clientFd,
+    SOCKET clientFd,
     std::string data);
 
 int SendFile(
-    int clientFd,
+    SOCKET clientFd,
     FILE *fp,
     std::string contentType,
     size_t contentLength);

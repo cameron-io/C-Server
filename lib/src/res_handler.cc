@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "res_handler.hh"
 #include "res_content.hh"
-#include "http_server.hh"
 
 int SendOK(
     int clientFd,

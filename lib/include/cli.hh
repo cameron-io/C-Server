@@ -5,11 +5,10 @@
 #include <limits>
 #include <iostream>
 #include <signal.h>
-#include "http_server.hh"
+#include "core.hh"
 
 namespace CLI
 {
-#ifdef _WIN32
     void StartReplAsync(int *keepRunning)
     {
         std::thread clientThread(
@@ -20,7 +19,7 @@ namespace CLI
 #define BIT_LIMIT std::numeric_limits<std::size_t>::digits
 #define THREADS_AVAILABLE std::thread::hardware_concurrency()
 
-                std::cout << "C/C++ MSVC: " << _MSC_VER << " "
+                std::cout << "C/C++ SHELL: " << " "
                           << "[" << BIT_LIMIT << "-bit] "
                           << "[threads: " << THREADS_AVAILABLE << "]"
                           << std::endl;
@@ -54,31 +53,5 @@ namespace CLI
             });
         clientThread.detach();
     }
-#endif
-
-    void IntHandler(int sig)
-    {
-        char c;
-
-        signal(sig, SIG_IGN);
-        printf("\nDo you really want to quit? [y/n] ");
-        c = getchar();
-        if (c == 'y' || c == 'Y')
-        {
-            printf("Shutting down...\n");
-            HttpServer::Stop();
-
-#if defined(_WIN32)
-            WSACleanup();
-#endif
-
-            printf("Finished.\n");
-
-            exit(0);
-        }
-        signal(SIGINT, IntHandler);
-        getchar();
-    }
 }
-
 #endif

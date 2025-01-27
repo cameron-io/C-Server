@@ -2,7 +2,7 @@
 #define REQUEST_HANDLER_H
 
 #include <string>
-#include "http_server.hh"
+#include "core.hh"
 
 int HandleRequest(SOCKET clientFd, std::string request);
 
