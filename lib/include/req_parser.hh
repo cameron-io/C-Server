@@ -3,8 +3,8 @@
 
 #include <string>
 
-std::string get_content_type(std::string path);
+const char *get_content_type(const char *path);
 
-std::string parse_method(std::string req);
+const char *parse_method(char *req);
 
 #endif

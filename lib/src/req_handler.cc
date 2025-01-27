@@ -8,25 +8,25 @@
 
 #define BASE_PATH "public"
 
-std::string serve_resource(std::string path);
+char *serve_resource(const char *path);
 
-std::string handle_request(std::string req)
+char *handle_request(char *req)
 {
     std::string method = parse_method(req);
 
     if (method == "GET")
     {
-        std::string path = req.substr(4, req.length() - 4);
-        size_t end_index = path.find(" ");
-        if (end_index == std::string::npos)
+        char *path = req + 4;
+        char *end_path = strstr(path, " ");
+        if (!end_path)
         {
             return bad_request("Invalid path.");
         }
         else
         {
             // null terminate path
-            path[end_index] = 0;
-            return serve_resource(path.c_str());
+            *end_path = 0;
+            return serve_resource(path);
         }
     }
     else if (method == "POST")
@@ -41,24 +41,24 @@ std::string handle_request(std::string req)
     return bad_request("Unsupported Request.");
 }
 
-std::string serve_resource(std::string path)
+char *serve_resource(const char *path)
 {
-    if (path == "/")
+    if (strcmp(path, "/") == 0)
         path = "/index.html";
 
-    if (path.length() > 100)
+    if (strlen(path) > 100)
     {
         return bad_request("Path size too large.");
     }
 
-    if (path.find("..") != std::string::npos)
+    if (strstr(path, ".."))
     {
         return bad_request("Path navigation not permitted.");
     }
 
     const int path_size = 128;
     char full_path[path_size];
-    snprintf(full_path, path_size, "%s%s", BASE_PATH, path.c_str());
+    snprintf(full_path, path_size, "%s%s", BASE_PATH, path);
 
 #if defined(_WIN32)
     char *p = full_path;
@@ -82,12 +82,15 @@ std::string serve_resource(std::string path)
     rewind(fp);
 
     // Send File Contents
-    std::string content_type = get_content_type(full_path);
-    std::string headers = set_headers("200 OK", content_type, content_length);
+    const char *content_type = get_content_type(full_path);
+    char *headers = set_headers("200 OK", content_type, content_length);
 
-    std::string file_buffer = read_file(fp);
+    char *file_buffer = read_file(fp);
 
     fclose(fp);
 
-    return headers + file_buffer;
+    char *response = strcat(headers, file_buffer);
+    free(file_buffer);
+
+    return response;
 }

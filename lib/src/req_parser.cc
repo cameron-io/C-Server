@@ -1,57 +1,52 @@
 #include "req_parser.hh"
 
-std::string get_content_type(std::string path)
+const char *get_content_type(const char *path)
 {
-    size_t last_dot_index = path.rfind('.');
-    if (last_dot_index != std::string::npos)
+    const char *last_dot = strrchr(path, '.');
+    if (last_dot)
     {
-        std::string last_dot = path.substr(last_dot_index, path.length() - last_dot_index);
-
-        if (last_dot == ".css")
+        if (strcmp(last_dot, ".css") == 0)
             return "text/css";
-        if (last_dot == ".csv")
+        if (strcmp(last_dot, ".csv") == 0)
             return "text/csv";
-        if (last_dot == ".gif")
+        if (strcmp(last_dot, ".gif") == 0)
             return "image/gif";
-        if (last_dot == ".htm")
+        if (strcmp(last_dot, ".htm") == 0)
             return "text/html";
-        if (last_dot == ".html")
+        if (strcmp(last_dot, ".html") == 0)
             return "text/html";
-        if (last_dot == ".ico")
+        if (strcmp(last_dot, ".ico") == 0)
             return "image/x-icon";
-        if (last_dot == ".jpeg")
+        if (strcmp(last_dot, ".jpeg") == 0)
             return "image/jpeg";
-        if (last_dot == ".jpg")
+        if (strcmp(last_dot, ".jpg") == 0)
             return "image/jpeg";
-        if (last_dot == ".js")
+        if (strcmp(last_dot, ".js") == 0)
             return "application/javascript";
-        if (last_dot == ".json")
+        if (strcmp(last_dot, ".json") == 0)
             return "application/json";
-        if (last_dot == ".png")
+        if (strcmp(last_dot, ".png") == 0)
             return "image/png";
-        if (last_dot == ".pdf")
+        if (strcmp(last_dot, ".pdf") == 0)
             return "application/pdf";
-        if (last_dot == ".svg")
+        if (strcmp(last_dot, ".svg") == 0)
             return "image/svg+xml";
-        if (last_dot == ".txt")
+        if (strcmp(last_dot, ".txt") == 0)
             return "text/plain";
     }
-
     return "application/octet-stream";
 }
 
-std::string parse_method(std::string req)
+const char *parse_method(char *req)
 {
-    std::string method;
-    if (req.substr(0, 3) == "GET")
-        method = "GET";
-    else if (req.substr(0, 3) == "PUT")
-        method = "PUT";
-    else if (req.substr(0, 4) == "POST")
-        method = "POST";
-    else if (req.substr(0, 6) == "DELETE")
-        method = "DELETE";
-    else if (req.substr(0, 7) == "OPTIONS")
-        method = "OPTIONS";
-    return method;
+    if (strncmp(req, "GET", 3) == 0)
+        return "GET";
+    else if (strncmp(req, "PUT", 3) == 0)
+        return "PUT";
+    else if (strncmp(req, "POST", 4) == 0)
+        return "POST";
+    else if (strncmp(req, "DELETE", 6) == 0)
+        return "DELETE";
+    else if (strncmp(req, "OPTIONS", 7) == 0)
+        return "OPTIONS";
 }

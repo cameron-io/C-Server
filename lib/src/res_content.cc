@@ -1,36 +1,40 @@
+#include <string.h>
+#include <memory.h>
 #include "res_content.hh"
 
 #define BSIZE 1024
 
-std::string ok(
-    std::string content_type,
-    std::string data)
+char *ok(
+    const char *content_type,
+    const char *data)
 {
-    std::string headers = set_headers("200 OK", content_type, data.length());
-    return headers + data;
+    char *headers = set_headers("200 OK", content_type, strlen(data));
+    return strcat(headers, data);
 }
 
-std::string no_content()
+char *no_content()
 {
-    return set_headers("204 No Content", "text/plain", 0);
+    char *buffer = (char *)malloc(BSIZE);
+    buffer = set_headers("204 No Content", "text/plain", 0);
+    return buffer;
 }
 
-std::string bad_request(std::string data)
+char *bad_request(const char *data)
 {
-    std::string headers = set_headers("400 Bad Request", "text/plain", data.length());
-    return headers + data;
+    char *headers = set_headers("400 Bad Request", "text/plain", strlen(data));
+    return strcat(headers, data);
 }
 
-std::string not_found(std::string data)
+char *not_found(const char *data)
 {
-    std::string headers = set_headers("404 Not Found", "text/plain", data.length());
-    return headers + data;
+    char *headers = set_headers("404 Not Found", "text/plain", strlen(data));
+    return strcat(headers, data);
 }
 
-std::string read_file(
+char *read_file(
     FILE *fp)
 {
-    char buffer[BSIZE] = {0};
+    char *buffer = (char *)malloc(BSIZE);
     int r = fread(buffer, 1, BSIZE, fp);
     while (r)
     {
@@ -39,9 +43,9 @@ std::string read_file(
     return buffer;
 }
 
-std::string set_headers(
-    std::string status_code,
-    std::string content_type,
+char *set_headers(
+    const char *status_code,
+    const char *content_type,
     unsigned int content_length)
 {
     const char *headers =
@@ -57,10 +61,10 @@ std::string set_headers(
         "Access-Control-Max-Age: 86400\r\n"
         "\r\n";
 
-    char buffer[BSIZE];
+    char *buffer = (char *)malloc(BSIZE);
     snprintf(buffer, BSIZE, headers,
-             status_code.c_str(),
+             status_code,
              content_length,
-             content_type.c_str());
+             content_type);
     return buffer;
 }
