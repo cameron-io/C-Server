@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdexcept>
 #include "http_server.hh"
-#include "request_handler.hh"
+#include "req_handler.hh"
 
 namespace HttpServer
 {
@@ -105,7 +105,7 @@ namespace HttpServer
             {
                 break;
             }
-            int bytesSent = ReqHandler::Handle(clientFd, input_buffer);
+            int bytesSent = HandleRequest(clientFd, input_buffer);
             printf("Client: sent %d bytes\n", bytesSent);
         }
 

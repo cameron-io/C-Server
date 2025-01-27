@@ -81,8 +81,8 @@ void EventManager::StartEventLoop()
 #include <stdexcept>
 #include "event_manager.hh"
 #include "http_server.hh"
-#include "request_handler.hh"
-#include "response_handler.hh"
+#include "req_handler.hh"
+#include "res_handler.hh"
 
 void EventManager::StartEventLoop()
 {
@@ -114,7 +114,7 @@ void EventManager::StartEventLoop()
             {
                 if (MAX_REQUEST_SIZE == client->received)
                 {
-                    ResHandler::SendBadRequest(client->socket, "Request too large.");
+                    SendBadRequest(client->socket, "Request too large.");
                     client = next;
                     continue;
                 }
@@ -136,7 +136,7 @@ void EventManager::StartEventLoop()
                     if (q)
                     {
                         *q = 0;
-                        ReqHandler::Handle(client->socket, client->request);
+                        HandleRequest(client->socket, client->request);
                         this->DropClient(&clientList, client);
                     }
                 }

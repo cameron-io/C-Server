@@ -4,8 +4,7 @@
 #include <uv.h>
 #include <stdlib.h>
 #include "req_data.hh"
-
-#define TST_MSG "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: 12\r\n\r\nHello World!"
+#include "res_content.hh"
 
 /*
  *  Callback for when the TCP write is complete
@@ -40,7 +39,7 @@ static void process_command_cb(uv_work_t *req)
     char *x;
     data = (client_request_data *)req->data;
     // Do the actual time-consuming request processing here
-    data->response = strdup(TST_MSG);
+    data->response = strdup((char *)OK("text/plain", "Hello World!").c_str());
 }
 
 #endif

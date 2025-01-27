@@ -9,7 +9,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(libuv)
 
 add_executable(LibUvServer libuv/main.cc)
-target_link_libraries(LibUvServer libuv::libuv)
+target_link_libraries(LibUvServer
+    libuv::libuv
+    HttpServerLib)
 target_include_directories(LibUvServer 
     PRIVATE
         ${CServer_SOURCE_DIR}/app/src/libuv/include)
