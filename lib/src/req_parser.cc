@@ -1,3 +1,4 @@
+#include <string.h>
 #include "req_parser.hh"
 
 const char *get_content_type(const char *path)

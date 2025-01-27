@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <string.h>
 #include "req_parser.hh"
 #include "req_handler.hh"
@@ -12,9 +11,9 @@ char *serve_resource(const char *path);
 
 char *handle_request(char *req)
 {
-    std::string method = parse_method(req);
+    const char *method = parse_method(req);
 
-    if (method == "GET")
+    if (strcmp(method, "GET") == 0)
     {
         char *path = req + 4;
         char *end_path = strstr(path, " ");
@@ -29,11 +28,11 @@ char *handle_request(char *req)
             return serve_resource(path);
         }
     }
-    else if (method == "POST")
+    else if (strcmp(method, "POST") == 0)
     {
         return no_content();
     }
-    else if (method == "OPTIONS")
+    else if (strcmp(method, "OPTIONS") == 0)
     {
         // Handle CORS pre-flight
         return no_content();

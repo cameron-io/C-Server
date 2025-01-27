@@ -1,8 +1,6 @@
 #ifndef RESPONSE_CONTENT_H
 #define RESPONSE_CONTENT_H
 
-#include <string>
-
 char *set_headers(
     const char *status_code,
     const char *content_type,
