@@ -83,7 +83,7 @@ std::string serve_resource(std::string path)
 
     // Send File Contents
     std::string content_type = get_content_type(full_path);
-    std::string headers = set_headers("200 ok", content_type, content_length);
+    std::string headers = set_headers("200 OK", content_type, content_length);
 
     std::string file_buffer = read_file(fp);
 

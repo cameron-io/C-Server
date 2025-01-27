@@ -6,7 +6,7 @@ std::string ok(
     std::string content_type,
     std::string data)
 {
-    std::string headers = set_headers("200 ok", content_type, data.length());
+    std::string headers = set_headers("200 OK", content_type, data.length());
     return headers + data;
 }
 
