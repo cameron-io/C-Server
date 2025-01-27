@@ -18,13 +18,48 @@
 #include "server_callback.hh"
 #include "req_data.hh"
 #include "req_callback.hh"
+#include "cli.hh"
 
 #define DEFAULT_PORT 8080
 
 static uv_tcp_t server;
 
+void int_handler(int sig)
+{
+    char c;
+
+    signal(sig, SIG_IGN);
+    printf("\nDo you really want to quit? [y/n] ");
+    c = getchar();
+    if (c == 'y' || c == 'Y')
+    {
+        printf("Shutting down...\n");
+        uv_stop(loop);
+
+#if defined(_WIN32)
+        WSACleanup();
+#endif
+
+        printf("Finished.\n");
+        exit(0);
+    }
+    signal(SIGINT, int_handler);
+    getchar();
+}
+
 int main()
 {
+#ifdef _WIN32
+    signal(SIGINT, int_handler);
+#else
+    struct sigaction sigIntHandler;
+    sigIntHandler.sa_handler = int_handler;
+    sigIntHandler.sa_flags = 0;
+    sigemptyset(&sigIntHandler.sa_mask);
+
+    sigaction(SIGINT, &sigIntHandler, NULL);
+#endif
+
     loop = uv_default_loop();
     struct sockaddr_in addr;
     uv_ip4_addr("0.0.0.0", DEFAULT_PORT, &addr);
