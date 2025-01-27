@@ -69,28 +69,9 @@ char *serve_resource(const char *path)
         ++p;
     }
 #endif
-
-    FILE *fp = fopen(full_path, "rb");
-    if (!fp)
-    {
-        return not_found("Could not locate resource.");
-    }
-
-    // Read File Contents
-    fseek(fp, 0L, SEEK_END);
-    size_t content_length = ftell(fp);
-    rewind(fp);
-
-    // Send File Contents
+    char *file_buffer = get_file_contents(full_path);
     const char *content_type = get_content_type(full_path);
-    char *headers = set_headers("200 OK", content_type, content_length);
-
-    char *file_buffer = read_file(fp);
-
-    fclose(fp);
-
-    char *response = strcat(headers, file_buffer);
+    char *response = ok(content_type, file_buffer);
     free(file_buffer);
-
     return response;
 }

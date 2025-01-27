@@ -31,15 +31,24 @@ char *not_found(const char *data)
     return strcat(headers, data);
 }
 
-char *read_file(
-    FILE *fp)
+char *get_file_contents(const char *full_path)
 {
-    char *buffer = (char *)malloc(BSIZE);
+    FILE *fp = fopen(full_path, "rb");
+    if (!fp)
+        return not_found("Could not locate resource.");
+
+    fseek(fp, 0L, SEEK_END);
+    size_t content_length = ftell(fp);
+    rewind(fp);
+
+    char *buffer = (char *)calloc(BSIZE, sizeof(char));
     int r = fread(buffer, 1, BSIZE, fp);
     while (r)
     {
         r = fread(buffer + r, 1, BSIZE, fp);
     }
+    fclose(fp);
+
     return buffer;
 }
 

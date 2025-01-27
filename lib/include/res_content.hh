@@ -9,18 +9,15 @@ char *set_headers(
     unsigned int content_length);
 
 char *ok(
-    char *content_type,
-    char *data);
+    const char *content_type,
+    const char *data);
 
 char *no_content();
 
-char *bad_request(
-    const char *data);
+char *bad_request(const char *data);
 
-char *not_found(
-    const char *data);
+char *not_found(const char *data);
 
-char *read_file(
-    FILE *fp);
+char *get_file_contents(const char *full_path);
 
 #endif
