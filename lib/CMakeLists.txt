@@ -1,6 +1,7 @@
 include_directories(${CServer_SOURCE_DIR}/lib/include)
 
 add_library(TcpLib SHARED
+    src/req_parser.cc
     src/req_handler.cc
     src/res_content.cc
 )
