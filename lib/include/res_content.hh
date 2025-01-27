@@ -3,21 +3,21 @@
 
 #include <string>
 
-std::string SetHeaders(std::string statusCode, std::string contentType, unsigned int contentLength);
+std::string set_headers(std::string statusCode, std::string contentType, unsigned int contentLength);
 
-std::string OK(
+std::string ok(
     std::string contentType,
     std::string data);
 
-std::string NoContent();
+std::string no_content();
 
-std::string BadRequest(
+std::string bad_request(
     std::string data);
 
-std::string NotFound(
+std::string not_found(
     std::string data);
 
-std::string ReadFile(
+std::string read_file(
     FILE *fp);
 
 #endif

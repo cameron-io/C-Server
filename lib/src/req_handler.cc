@@ -7,13 +7,13 @@
 
 #define BASE_PATH "public"
 
-std::string ParseMethod(std::string request);
-std::string GetContentType(std::string path);
-std::string ServeResource(std::string path);
+std::string parse_method(std::string request);
+std::string get_content_type(std::string path);
+std::string serve_resource(std::string path);
 
-std::string HandleRequest(std::string req)
+std::string handle_request(std::string req)
 {
-    std::string method = ParseMethod(req);
+    std::string method = parse_method(req);
 
     if (method == "GET")
     {
@@ -21,40 +21,40 @@ std::string HandleRequest(std::string req)
         size_t endIndex = path.find(" ");
         if (endIndex == std::string::npos)
         {
-            return BadRequest("Invalid path.");
+            return bad_request("Invalid path.");
         }
         else
         {
             // null terminate path
             path[endIndex] = 0;
-            return ServeResource(path.c_str());
+            return serve_resource(path.c_str());
         }
     }
     else if (method == "POST")
     {
-        return NoContent();
+        return no_content();
     }
     else if (method == "OPTIONS")
     {
         // Handle CORS pre-flight
-        return NoContent();
+        return no_content();
     }
-    return BadRequest("Unsupported Request.");
+    return bad_request("Unsupported Request.");
 }
 
-std::string ServeResource(std::string path)
+std::string serve_resource(std::string path)
 {
     if (path == "/")
         path = "/index.html";
 
     if (path.length() > 100)
     {
-        return BadRequest("Path size too large.");
+        return bad_request("Path size too large.");
     }
 
     if (path.find("..") != std::string::npos)
     {
-        return BadRequest("Path navigation not permitted.");
+        return bad_request("Path navigation not permitted.");
     }
 
     const int pathSize = 128;
@@ -74,7 +74,7 @@ std::string ServeResource(std::string path)
     FILE *fp = fopen(fullPath, "rb");
     if (!fp)
     {
-        return NotFound("Could not locate resource.");
+        return not_found("Could not locate resource.");
     }
 
     // Read File Contents
@@ -83,17 +83,17 @@ std::string ServeResource(std::string path)
     rewind(fp);
 
     // Send File Contents
-    std::string contentType = GetContentType(fullPath);
-    std::string headers = SetHeaders("200 OK", contentType, contentLength);
+    std::string contentType = get_content_type(fullPath);
+    std::string headers = set_headers("200 ok", contentType, contentLength);
 
-    std::string file_buffer = ReadFile(fp);
+    std::string file_buffer = read_file(fp);
 
     fclose(fp);
 
     return headers + file_buffer;
 }
 
-std::string GetContentType(std::string path)
+std::string get_content_type(std::string path)
 {
     size_t lastDotIndex = path.rfind('.');
     if (lastDotIndex != std::string::npos)
@@ -133,7 +133,7 @@ std::string GetContentType(std::string path)
     return "application/octet-stream";
 }
 
-std::string ParseMethod(std::string req)
+std::string parse_method(std::string req)
 {
     std::string method;
     if (req.substr(0, 3) == "GET")

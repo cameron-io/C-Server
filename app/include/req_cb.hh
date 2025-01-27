@@ -39,7 +39,7 @@ static void process_command_cb(uv_work_t *req)
     char *x;
     data = (client_request_data *)req->data;
     // Do the actual time-consuming request processing here
-    data->response = strdup((char *)HandleRequest(data->text).c_str());
+    data->response = strdup((char *)handle_request(data->text).c_str());
 }
 
 #endif

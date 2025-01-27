@@ -2,32 +2,32 @@
 
 #define BSIZE 1024
 
-std::string OK(
+std::string ok(
     std::string contentType,
     std::string data)
 {
-    std::string headers = SetHeaders("200 OK", contentType, data.length());
+    std::string headers = set_headers("200 ok", contentType, data.length());
     return headers + data;
 }
 
-std::string NoContent()
+std::string no_content()
 {
-    return SetHeaders("204 No Content", "text/plain", 0);
+    return set_headers("204 No Content", "text/plain", 0);
 }
 
-std::string BadRequest(std::string data)
+std::string bad_request(std::string data)
 {
-    std::string headers = SetHeaders("400 Bad Request", "text/plain", data.length());
+    std::string headers = set_headers("400 Bad Request", "text/plain", data.length());
     return headers + data;
 }
 
-std::string NotFound(std::string data)
+std::string not_found(std::string data)
 {
-    std::string headers = SetHeaders("404 Not Found", "text/plain", data.length());
+    std::string headers = set_headers("404 Not Found", "text/plain", data.length());
     return headers + data;
 }
 
-std::string ReadFile(
+std::string read_file(
     FILE *fp)
 {
     char buffer[BSIZE] = {0};
@@ -39,7 +39,7 @@ std::string ReadFile(
     return buffer;
 }
 
-std::string SetHeaders(
+std::string set_headers(
     std::string statusCode,
     std::string contentType,
     unsigned int contentLength)

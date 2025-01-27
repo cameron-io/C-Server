@@ -4,6 +4,6 @@
 #include <string>
 #include "core.hh"
 
-std::string HandleRequest(std::string request);
+std::string handle_request(std::string request);
 
 #endif
