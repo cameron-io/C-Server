@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
-#include "res_content.hh"
+#include "res_content.h"
 
 #define BSIZE 1024
 

@@ -1,7 +1,7 @@
 #ifndef REQUEST_HANDLER_H
 #define REQUEST_HANDLER_H
 
-#include "core.hh"
+#include "core.h"
 
 char *handle_request(char *req);
 

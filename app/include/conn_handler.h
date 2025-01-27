@@ -4,7 +4,7 @@
 #include <uv.h>
 #include <stdlib.h>
 #include <time.h>
-#include "req_cb.hh"
+#include "req_cb.h"
 
 static uv_loop_t *loop;
 
@@ -15,18 +15,20 @@ static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf);
 static void connection_cb(uv_stream_t *server, int status)
 {
     struct client_request_data *data;
+
     /* if status not zero there was an error */
     if (status == -1)
-    {
         return;
-    }
-    data = (client_request_data *)calloc(1, sizeof(*data));
+
+    data = (struct client_request_data *)calloc(1, sizeof(*data));
     data->start = time(NULL);
     uv_tcp_t *client = (uv_tcp_t *)malloc(sizeof(uv_tcp_t));
     client->data = data;
     data->client = client;
+
     /* initialize the new client */
     uv_tcp_init(loop, client);
+
     if (uv_accept(server, (uv_stream_t *)client) == 0)
     {
         /* start reading from stream */
@@ -34,6 +36,7 @@ static void connection_cb(uv_stream_t *server, int status)
         timer = (uv_timer_t *)malloc(sizeof(*timer));
         timer->data = data;
         data->timer = timer;
+
         uv_timer_init(loop, timer);
         uv_timer_set_repeat(timer, 1);
         uv_timer_start(timer, client_timeout_cb, 10000, 20000);
@@ -64,7 +67,7 @@ static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf)
     struct client_request_data *data;
     char *tmp;
     client = (uv_tcp_t *)stream;
-    data = (client_request_data *)stream->data;
+    data = (struct client_request_data *)stream->data;
     if (nread == -1 || nread == UV_EOF)
     {
         free(buf->base);

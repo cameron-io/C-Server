@@ -1,11 +1,11 @@
-#include <iostream>
 #include <string.h>
-#include "req_parser.hh"
-#include "req_handler.hh"
-#include "res_content.hh"
-#include "core.hh"
+#include "req_parser.h"
+#include "req_handler.h"
+#include "res_content.h"
+#include "core.h"
 
 #define BASE_PATH "public"
+#define PATH_SIZE 128
 
 char *serve_resource(const char *path);
 
@@ -55,9 +55,8 @@ char *serve_resource(const char *path)
         return bad_request("Path navigation not permitted.");
     }
 
-    const int path_size = 128;
-    char full_path[path_size];
-    snprintf(full_path, path_size, "%s%s", BASE_PATH, path);
+    char full_path[PATH_SIZE];
+    snprintf(full_path, PATH_SIZE, "%s%s", BASE_PATH, path);
 
 #if defined(_WIN32)
     char *p = full_path;

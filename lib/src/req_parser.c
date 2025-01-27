@@ -1,5 +1,5 @@
 #include <string.h>
-#include "req_parser.hh"
+#include "req_parser.h"
 
 const char *get_content_type(const char *path)
 {
