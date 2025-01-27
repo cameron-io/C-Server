@@ -9,30 +9,30 @@ int SendOK(
     std::string contentType,
     std::string data)
 {
-    std::string payload = OK(contentType, data);
-    return send(clientFd, payload.c_str(), payload.length(), 0);
+    std::string res_buffer = OK(contentType, data);
+    return send(clientFd, res_buffer.c_str(), res_buffer.length(), 0);
 }
 
 int SendNoContent(int clientFd)
 {
-    std::string payload = NoContent();
-    return send(clientFd, payload.c_str(), payload.length(), 0);
+    std::string res_buffer = NoContent();
+    return send(clientFd, res_buffer.c_str(), res_buffer.length(), 0);
 }
 
 int SendBadRequest(
     int clientFd,
     std::string data)
 {
-    std::string payload = BadRequest(data);
-    return send(clientFd, payload.c_str(), payload.length(), 0);
+    std::string res_buffer = BadRequest(data);
+    return send(clientFd, res_buffer.c_str(), res_buffer.length(), 0);
 }
 
 int SendNotFound(
     int clientFd,
     std::string data)
 {
-    std::string payload = NotFound(data);
-    return send(clientFd, payload.c_str(), payload.length(), 0);
+    std::string res_buffer = NotFound(data);
+    return send(clientFd, res_buffer.c_str(), res_buffer.length(), 0);
 }
 
 int SendFile(
@@ -43,6 +43,6 @@ int SendFile(
 {
     std::string headers = SetHeaders("200 OK", contentType, contentLength);
     std::string file_buffer = ReadFile(fp);
-    std::string payload = headers + file_buffer;
-    return send(clientFd, payload.c_str(), payload.length(), 0);
+    std::string res_buffer = headers + file_buffer;
+    return send(clientFd, res_buffer.c_str(), res_buffer.length(), 0);
 }

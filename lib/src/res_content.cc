@@ -7,28 +7,24 @@ std::string OK(
     std::string data)
 {
     std::string headers = SetHeaders("200 OK", contentType, data.length());
-    std::string payload = headers + data;
-    return payload;
+    return headers + data;
 }
 
 std::string NoContent()
 {
-    std::string payload = SetHeaders("204 No Content", "text/plain", 0);
-    return payload;
+    return SetHeaders("204 No Content", "text/plain", 0);
 }
 
 std::string BadRequest(std::string data)
 {
     std::string headers = SetHeaders("400 Bad Request", "text/plain", data.length());
-    std::string payload = headers + data;
-    return payload;
+    return headers + data;
 }
 
 std::string NotFound(std::string data)
 {
     std::string headers = SetHeaders("404 Not Found", "text/plain", data.length());
-    std::string payload = headers + data;
-    return payload;
+    return headers + data;
 }
 
 std::string ReadFile(
