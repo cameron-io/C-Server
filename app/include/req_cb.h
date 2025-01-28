@@ -9,32 +9,32 @@
 // Callback for when the TCP write is complete
 static void on_write_end_cb(uv_write_t *req, int status)
 {
-    req_data *data;
-    data = (req_data *)req->data;
-    close_data(data);
+    req_data *r;
+    r = (req_data *)req->data;
+    close_data(r);
 }
 
 // Callback for post completion of the work associated with the request
 static void on_process_command_complete_cb(uv_work_t *req, int status)
 {
-    req_data *data;
-    data = (req_data *)req->data;
-    uv_buf_t buf = uv_buf_init(data->response, strlen(data->response) + 1);
-    data->write_req = (uv_write_t *)malloc(sizeof(*data->write_req));
-    data->write_req->data = data;
-    uv_timer_stop(data->timer);
-    uv_write(data->write_req, (uv_stream_t *)data->client,
+    req_data *r;
+    r = (req_data *)req->data;
+    uv_buf_t buf = uv_buf_init(r->response, strlen(r->response) + 1);
+    r->write_req = (uv_write_t *)malloc(sizeof(*r->write_req));
+    r->write_req->data = r;
+    uv_timer_stop(r->timer);
+    uv_write(r->write_req, (uv_stream_t *)r->client,
              &buf, 1, on_write_end_cb);
 }
 
 // Callback for doing the actual work.
 static void process_command_cb(uv_work_t *req)
 {
-    req_data *data;
+    req_data *r;
     char *x;
-    data = (req_data *)req->data;
+    r = (req_data *)req->data;
     // Do the actual time-consuming request processing here
-    data->response = strdup(handle_request(data->text));
+    r->response = strdup(handle_request(r->text));
 }
 
 #endif

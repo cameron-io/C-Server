@@ -17,6 +17,7 @@
 #include "req_data.h"
 
 #define DEFAULT_PORT 8080
+#define BACKLOG 128
 
 static uv_tcp_t server;
 
@@ -65,8 +66,10 @@ int main()
 
     // bind the server to the address above
     uv_tcp_bind(&server, (struct sockaddr *)&addr, 0);
+
     printf("Listening on port: %d...\n", DEFAULT_PORT);
-    int r = uv_listen((uv_stream_t *)&server, 128,
+
+    int r = uv_listen((uv_stream_t *)&server, BACKLOG,
                       connection_cb);
     if (r)
         return fprintf(stderr, "Error on listening: %s.\n",
