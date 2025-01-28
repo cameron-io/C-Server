@@ -21,28 +21,7 @@
 
 static uv_tcp_t server;
 
-void int_handler(int sig)
-{
-    char c;
-
-    signal(sig, SIG_IGN);
-    printf("\nDo you really want to quit? [y/n] ");
-    c = getchar();
-    if (c == 'y' || c == 'Y')
-    {
-        printf("Shutting down...\n");
-        uv_stop(loop);
-
-#if defined(_WIN32)
-        WSACleanup();
-#endif
-
-        printf("Finished.\n");
-        exit(0);
-    }
-    signal(SIGINT, int_handler);
-    getchar();
-}
+void int_handler(int sig);
 
 int main()
 {
@@ -77,4 +56,27 @@ int main()
 
     // execute all tasks in queue
     return uv_run(loop, UV_RUN_DEFAULT);
+}
+
+void int_handler(int sig)
+{
+    char c;
+
+    signal(sig, SIG_IGN);
+    printf("\nDo you really want to quit? [y/n] ");
+    c = getchar();
+    if (c == 'y' || c == 'Y')
+    {
+        printf("Shutting down...\n");
+        uv_stop(loop);
+
+#if defined(_WIN32)
+        WSACleanup();
+#endif
+
+        printf("Finished.\n");
+        exit(0);
+    }
+    signal(SIGINT, int_handler);
+    getchar();
 }
