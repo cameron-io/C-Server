@@ -12,7 +12,7 @@ static void client_timeout_cb(uv_timer_t *handle);
 static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf);
 
 // Callback for handling the new connection
-static void connection_cb(uv_stream_t *server, int status)
+static void handle_client_cb(uv_stream_t *server, int status)
 {
     req_data *r;
 
@@ -55,8 +55,10 @@ static void client_timeout_cb(uv_timer_t *handle)
     req_data *r;
     r = (req_data *)handle->data;
     uv_timer_stop(handle);
+
     if (r->work_started)
         return;
+
     close_data(r);
 }
 
@@ -97,8 +99,7 @@ static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf)
         if (!r->work_started && r->text_len &&
             (strstr(r->text, "\r\n") || strstr(r->text, "\n\n")))
         {
-            r->work_req =
-                (uv_work_t *)malloc(sizeof(*r->work_req));
+            r->work_req = (uv_work_t *)malloc(sizeof(*r->work_req));
             r->work_req->data = r;
             r->work_started = 1;
 

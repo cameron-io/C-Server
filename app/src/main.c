@@ -70,7 +70,7 @@ int main()
     printf("Listening on port: %d...\n", DEFAULT_PORT);
 
     int r = uv_listen((uv_stream_t *)&server, BACKLOG,
-                      connection_cb);
+                      handle_client_cb);
     if (r)
         return fprintf(stderr, "Error on listening: %s.\n",
                        uv_strerror(r));
