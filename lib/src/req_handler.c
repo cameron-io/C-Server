@@ -2,7 +2,6 @@
 #include "req_parser.h"
 #include "req_handler.h"
 #include "res_content.h"
-#include "core.h"
 
 #define BASE_PATH "public"
 #define PATH_SIZE 128
