@@ -68,8 +68,9 @@ static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf)
     uv_tcp_t *client;
     req_data *r;
     char *tmp;
-    client = (uv_tcp_t *)stream;
+
     r = (req_data *)stream->data;
+
     if (nread == -1 || nread == UV_EOF)
     {
         free(buf->base);
