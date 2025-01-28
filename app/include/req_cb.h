@@ -31,7 +31,6 @@ static void on_process_command_complete_cb(uv_work_t *req, int status)
 static void process_command_cb(uv_work_t *req)
 {
     req_data *r;
-    char *x;
     r = (req_data *)req->data;
     // Do the actual time-consuming request processing here
     r->response = strdup(handle_request(r->text));
