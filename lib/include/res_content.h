@@ -1,6 +1,8 @@
 #ifndef RESPONSE_CONTENT_H
 #define RESPONSE_CONTENT_H
 
+#define BSIZE 1024
+
 char *set_headers(
     const char *status_code,
     const char *content_type,
@@ -16,6 +18,8 @@ char *bad_request(const char *data);
 
 char *not_found(const char *data);
 
-char *get_file_contents(const char *full_path);
+int read_file_contents(
+    char *destination,
+    const char *full_path);
 
 #endif

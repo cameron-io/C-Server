@@ -67,9 +67,12 @@ char *serve_resource(const char *path)
         ++p;
     }
 #endif
-    char *file_buffer = get_file_contents(full_path);
+    char file_buffer[BSIZE];
+    if (read_file_contents(file_buffer, full_path))
+        return not_found("Could not locate resource.");
+
     const char *content_type = get_content_type(full_path);
     char *response = ok(content_type, file_buffer);
-    free(file_buffer);
+
     return response;
 }
