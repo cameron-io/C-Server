@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "conn_handler.h"
-#include "req_handler.h"
 #include "req_data.h"
 
 #define DEFAULT_PORT 8080

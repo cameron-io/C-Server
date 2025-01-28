@@ -1,10 +1,10 @@
-#ifndef REQ_CALLBACK_H
-#define REQ_CALLBACK_H
+#ifndef REQ_HANDLER_H
+#define REQ_HANDLER_H
 
 #include <uv.h>
 #include <stdlib.h>
 #include "req_data.h"
-#include "req_handler.h"
+#include "req_router.h"
 
 // Callback for when the TCP write is complete
 static void on_write_end_cb(uv_write_t *req, int status)
@@ -15,7 +15,7 @@ static void on_write_end_cb(uv_write_t *req, int status)
 }
 
 // Callback for post completion of the work associated with the request
-static void on_process_command_complete_cb(uv_work_t *req, int status)
+static void on_req_handle_complete_cb(uv_work_t *req, int status)
 {
     req_data *r;
     r = (req_data *)req->data;
@@ -28,12 +28,12 @@ static void on_process_command_complete_cb(uv_work_t *req, int status)
 }
 
 // Callback for doing the actual work.
-static void process_command_cb(uv_work_t *req)
+static void req_handle_cb(uv_work_t *req)
 {
     req_data *r;
     r = (req_data *)req->data;
     // Do the actual time-consuming request processing here
-    r->response = strdup(handle_request(r->text));
+    r->response = strdup(route_request(r->text));
 }
 
 #endif

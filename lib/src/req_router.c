@@ -1,6 +1,6 @@
 #include <string.h>
 #include "req_parser.h"
-#include "req_handler.h"
+#include "req_router.h"
 #include "res_content.h"
 
 #define BASE_PATH "public"
@@ -8,7 +8,7 @@
 
 char *serve_resource(const char *path);
 
-char *handle_request(char *req)
+char *route_request(char *req)
 {
     const char *method = parse_method(req);
 

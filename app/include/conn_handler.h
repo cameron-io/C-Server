@@ -1,10 +1,10 @@
-#ifndef SERVER_CALLBACK_H
-#define SERVER_CALLBACK_H
+#ifndef CONN_HANDLER_H
+#define CONN_HANDLER_H
 
 #include <uv.h>
 #include <stdlib.h>
 #include <time.h>
-#include "req_cb.h"
+#include "req_handler.h"
 
 static uv_loop_t *loop;
 
@@ -106,8 +106,8 @@ static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf)
 
             uv_read_stop(stream);
             uv_queue_work(loop, r->work_req,
-                          process_command_cb,
-                          on_process_command_complete_cb);
+                          req_handle_cb,
+                          on_req_handle_complete_cb);
         }
     }
 }

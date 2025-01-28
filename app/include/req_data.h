@@ -31,7 +31,7 @@ static void alloc_buffer(uv_handle_t *handle, size_t size,
 }
 
 // Callback to free the handle
-static void on_close_free(uv_handle_t *handle)
+static void on_close_free_cb(uv_handle_t *handle)
 {
     free(handle);
 }
@@ -43,14 +43,14 @@ static void close_data(req_data *data)
         return;
     if (data->client)
         uv_close((uv_handle_t *)data->client,
-                 on_close_free);
+                 on_close_free_cb);
     if (data->work_req)
         free(data->work_req);
     if (data->write_req)
         free(data->write_req);
     if (data->timer)
         uv_close((uv_handle_t *)data->timer,
-                 on_close_free);
+                 on_close_free_cb);
     if (data->text)
         free(data->text);
     if (data->response)
