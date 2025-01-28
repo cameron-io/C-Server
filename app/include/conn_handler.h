@@ -11,27 +11,27 @@ static uv_loop_t *loop;
 static void client_timeout_cb(uv_timer_t *handle);
 static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf);
 
-/* Callback for handling the new connection */
+// Callback for handling the new connection
 static void connection_cb(uv_stream_t *server, int status)
 {
-    struct client_request_data *data;
+    req_data *data;
 
-    /* if status not zero there was an error */
+    // if status not zero there was an error
     if (status == -1)
         return;
 
-    data = (struct client_request_data *)calloc(1, sizeof(*data));
+    data = (req_data *)calloc(1, sizeof(*data));
     data->start = time(NULL);
     uv_tcp_t *client = (uv_tcp_t *)malloc(sizeof(uv_tcp_t));
     client->data = data;
     data->client = client;
 
-    /* initialize the new client */
+    // initialize the new client
     uv_tcp_init(loop, client);
 
     if (uv_accept(server, (uv_stream_t *)client) == 0)
     {
-        /* start reading from stream */
+        // start reading from stream
         uv_timer_t *timer;
         timer = (uv_timer_t *)malloc(sizeof(*timer));
         timer->data = data;
@@ -44,30 +44,30 @@ static void connection_cb(uv_stream_t *server, int status)
     }
     else
     {
-        /* close client stream on error */
+        // close client stream on error
         close_data(data);
     }
 }
 
-/* Callback for the timer which signifies a timeout */
+// Callback for the timer which signifies a timeout
 static void client_timeout_cb(uv_timer_t *handle)
 {
-    struct client_request_data *data;
-    data = (struct client_request_data *)handle->data;
+    req_data *data;
+    data = (req_data *)handle->data;
     uv_timer_stop(handle);
     if (data->work_started)
         return;
     close_data(data);
 }
 
-/* Callback for read function, called multiple times per request */
+// Callback for read function, called multiple times per request
 static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf)
 {
     uv_tcp_t *client;
-    struct client_request_data *data;
+    req_data *data;
     char *tmp;
     client = (uv_tcp_t *)stream;
-    data = (struct client_request_data *)stream->data;
+    data = (req_data *)stream->data;
     if (nread == -1 || nread == UV_EOF)
     {
         free(buf->base);

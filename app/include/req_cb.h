@@ -6,24 +6,19 @@
 #include "req_data.h"
 #include "req_handler.h"
 
-/*
- *  Callback for when the TCP write is complete
- */
+// Callback for when the TCP write is complete
 static void on_write_end_cb(uv_write_t *req, int status)
 {
-    struct client_request_data *data;
-    data = (struct client_request_data *)req->data;
+    req_data *data;
+    data = (req_data *)req->data;
     close_data(data);
 }
 
-/*
- * Callback for post completion of the work associated with the
- * request
- */
+// Callback for post completion of the work associated with the request
 static void on_process_command_complete_cb(uv_work_t *req, int status)
 {
-    struct client_request_data *data;
-    data = (struct client_request_data *)req->data;
+    req_data *data;
+    data = (req_data *)req->data;
     uv_buf_t buf = uv_buf_init(data->response, strlen(data->response) + 1);
     data->write_req = (uv_write_t *)malloc(sizeof(*data->write_req));
     data->write_req->data = data;
@@ -32,14 +27,12 @@ static void on_process_command_complete_cb(uv_work_t *req, int status)
              &buf, 1, on_write_end_cb);
 }
 
-/*
- * Callback for doing the actual work.
- */
+// Callback for doing the actual work.
 static void process_command_cb(uv_work_t *req)
 {
-    struct client_request_data *data;
+    req_data *data;
     char *x;
-    data = (struct client_request_data *)req->data;
+    data = (req_data *)req->data;
     // Do the actual time-consuming request processing here
     data->response = strdup(handle_request(data->text));
 }
