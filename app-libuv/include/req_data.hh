@@ -1,5 +1,4 @@
-#ifndef REQ_DATA_H
-#define REQ_DATA_H
+#pragma once
 
 #include <uv.h>
 #include <stdlib.h>
@@ -57,5 +56,3 @@ static void close_data(req_data *data)
         free(data->response);
     free(data);
 }
-
-#endif

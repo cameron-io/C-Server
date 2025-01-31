@@ -1,6 +1,5 @@
-#ifndef REQUEST_HANDLER_H
-#define REQUEST_HANDLER_H
+#pragma once
 
-char *handle_request(char *req);
+#include <string>
 
-#endif
+std::string handle_request(std::string req);

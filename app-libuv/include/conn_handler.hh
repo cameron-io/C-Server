@@ -1,5 +1,4 @@
-#ifndef SERVER_CALLBACK_H
-#define SERVER_CALLBACK_H
+#pragma once
 
 #include <uv.h>
 #include <stdlib.h>
@@ -111,5 +110,3 @@ static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf)
         }
     }
 }
-
-#endif

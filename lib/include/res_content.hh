@@ -1,26 +1,25 @@
-#ifndef RESPONSE_CONTENT_H
-#define RESPONSE_CONTENT_H
+#pragma once
+
+#include <string>
 
 #define BSIZE 1024
 
-char *set_headers(
-    const char *status_code,
-    const char *content_type,
+std::string set_headers(
+    std::string status_code,
+    std::string content_type,
     unsigned int content_length);
 
-char *ok(
-    const char *content_type,
+std::string ok(
+    std::string content_type,
     int content_length,
-    const char *data);
+    std::string data);
 
-char *no_content();
+std::string no_content();
 
-char *bad_request(const char *data);
+std::string bad_request(std::string data);
 
-char *not_found(const char *data);
+std::string not_found(std::string data);
 
 int read_file_contents(
     char *destination,
-    const char *full_path);
-
-#endif
+    std::string full_path);

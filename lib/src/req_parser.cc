@@ -1,54 +1,57 @@
-#include <string.h>
 #include "req_parser.hh"
 
-const char *get_content_type(const char *path)
+std::string get_content_type(std::string path)
 {
-    const char *last_dot = strrchr(path, '.');
-    if (last_dot)
+    size_t last_dot_index = path.rfind('.');
+    if (last_dot_index != std::string::npos)
     {
-        if (strcmp(last_dot, ".css") == 0)
+        std::string last_dot = path.substr(last_dot_index, path.length() - last_dot_index);
+
+        if (last_dot == ".css")
             return "text/css";
-        if (strcmp(last_dot, ".csv") == 0)
+        if (last_dot == ".csv")
             return "text/csv";
-        if (strcmp(last_dot, ".gif") == 0)
+        if (last_dot == ".gif")
             return "image/gif";
-        if (strcmp(last_dot, ".htm") == 0)
+        if (last_dot == ".htm")
             return "text/html";
-        if (strcmp(last_dot, ".html") == 0)
+        if (last_dot == ".html")
             return "text/html";
-        if (strcmp(last_dot, ".ico") == 0)
+        if (last_dot == ".ico")
             return "image/x-icon";
-        if (strcmp(last_dot, ".jpeg") == 0)
+        if (last_dot == ".jpeg")
             return "image/jpeg";
-        if (strcmp(last_dot, ".jpg") == 0)
+        if (last_dot == ".jpg")
             return "image/jpeg";
-        if (strcmp(last_dot, ".js") == 0)
+        if (last_dot == ".js")
             return "application/javascript";
-        if (strcmp(last_dot, ".json") == 0)
+        if (last_dot == ".json")
             return "application/json";
-        if (strcmp(last_dot, ".png") == 0)
+        if (last_dot == ".png")
             return "image/png";
-        if (strcmp(last_dot, ".pdf") == 0)
+        if (last_dot == ".pdf")
             return "application/pdf";
-        if (strcmp(last_dot, ".svg") == 0)
+        if (last_dot == ".svg")
             return "image/svg+xml";
-        if (strcmp(last_dot, ".txt") == 0)
+        if (last_dot == ".txt")
             return "text/plain";
     }
+
     return "application/octet-stream";
 }
 
-const char *parse_method(char *req)
+std::string parse_method(std::string req)
 {
-    if (strncmp(req, "GET", 3) == 0)
-        return "GET";
-    else if (strncmp(req, "PUT", 3) == 0)
-        return "PUT";
-    else if (strncmp(req, "POST", 4) == 0)
-        return "POST";
-    else if (strncmp(req, "DELETE", 6) == 0)
-        return "DELETE";
-    else if (strncmp(req, "OPTIONS", 7) == 0)
-        return "OPTIONS";
-    return NULL;
+    std::string method;
+    if (req.substr(0, 3) == "GET")
+        method = "GET";
+    else if (req.substr(0, 3) == "PUT")
+        method = "PUT";
+    else if (req.substr(0, 4) == "POST")
+        method = "POST";
+    else if (req.substr(0, 6) == "DELETE")
+        method = "DELETE";
+    else if (req.substr(0, 7) == "OPTIONS")
+        method = "OPTIONS";
+    return method;
 }

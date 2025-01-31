@@ -1,42 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <memory.h>
 #include "res_content.hh"
 
-char *ok(
-    const char *content_type,
+std::string ok(
+    std::string content_type,
     int content_length,
-    const char *data)
+    std::string data)
 {
-    char *headers = set_headers("200 OK", content_type, (unsigned int)content_length);
-    return strcat(headers, data);
+    std::string headers = set_headers("200 OK", content_type, (unsigned int)content_length);
+    return headers + data;
 }
 
-char *no_content()
+std::string no_content()
 {
-    char *buffer = (char *)malloc(BSIZE);
-    buffer = set_headers("204 No Content", "text/plain", 0);
+    std::string buffer = set_headers("204 No Content", "text/plain", 0);
     return buffer;
 }
 
-char *bad_request(const char *data)
+std::string bad_request(std::string data)
 {
-    char *headers = set_headers("400 Bad Request", "text/plain", strlen(data));
-    return strcat(headers, data);
+    std::string headers = set_headers("400 Bad Request", "text/plain", data.length());
+    return headers + data;
 }
 
-char *not_found(const char *data)
+std::string not_found(std::string data)
 {
-    char *headers = set_headers("404 Not Found", "text/plain", strlen(data));
-    return strcat(headers, data);
+    std::string headers = set_headers("404 Not Found", "text/plain", data.length());
+    return headers + data;
 }
 
 int read_file_contents(
     char *buffer,
-    const char *full_path)
+    std::string full_path)
 {
-    FILE *fp = fopen(full_path, "rb");
+    FILE *fp = fopen(full_path.c_str(), "rb");
     if (!fp)
         return -1;
 
@@ -54,9 +52,9 @@ int read_file_contents(
     return content_length;
 }
 
-char *set_headers(
-    const char *status_code,
-    const char *content_type,
+std::string set_headers(
+    std::string status_code,
+    std::string content_type,
     unsigned int content_length)
 {
     const char *headers =
@@ -74,8 +72,8 @@ char *set_headers(
 
     char *buffer = (char *)malloc(BSIZE);
     snprintf(buffer, BSIZE, headers,
-             status_code,
+             status_code.c_str(),
              content_length,
-             content_type);
+             content_type.c_str());
     return buffer;
 }

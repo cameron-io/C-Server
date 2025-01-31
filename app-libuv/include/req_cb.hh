@@ -1,5 +1,4 @@
-#ifndef REQ_CALLBACK_H
-#define REQ_CALLBACK_H
+#pragma once
 
 #include <uv.h>
 #include <stdlib.h>
@@ -33,7 +32,5 @@ static void process_command_cb(uv_work_t *req)
     req_data *r;
     r = (req_data *)req->data;
     // Do the actual time-consuming request processing here
-    r->response = strdup(handle_request(r->text));
+    r->response = strdup(handle_request(r->text).c_str());
 }
-
-#endif

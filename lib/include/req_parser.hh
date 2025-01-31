@@ -1,8 +1,7 @@
-#ifndef REQ_PARSER_H
-#define REQ_PARSER_H
+#pragma once
 
-const char *get_content_type(const char *path);
+#include <string>
 
-const char *parse_method(char *req);
+std::string get_content_type(std::string path);
 
-#endif
+std::string parse_method(std::string req);

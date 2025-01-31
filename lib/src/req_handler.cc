@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 #include "req_parser.hh"
 #include "req_handler.hh"
 #include "res_content.hh"
@@ -7,32 +6,32 @@
 #define BASE_PATH "public"
 #define PATH_SIZE 128
 
-char *serve_resource(const char *path);
+std::string serve_resource(std::string path);
 
-char *handle_request(char *req)
+std::string handle_request(std::string req)
 {
-    const char *method = parse_method(req);
+    std::string method = parse_method(req);
 
-    if (strcmp(method, "GET") == 0)
+    if (method == "GET")
     {
-        char *path = req + 4;
-        char *end_path = strstr(path, " ");
-        if (!end_path)
+        std::string path = req.substr(4, req.length() - 4);
+        size_t end_index = path.find(" ");
+        if (end_index == std::string::npos)
         {
             return bad_request("Invalid path.");
         }
         else
         {
             // null terminate path
-            *end_path = 0;
-            return serve_resource(path);
+            path[end_index] = 0;
+            return serve_resource(path.c_str());
         }
     }
-    else if (strcmp(method, "POST") == 0)
+    else if (method == "POST")
     {
         return no_content();
     }
-    else if (strcmp(method, "OPTIONS") == 0)
+    else if (method == "OPTIONS")
     {
         // Handle CORS pre-flight
         return no_content();
@@ -40,26 +39,26 @@ char *handle_request(char *req)
     return bad_request("Unsupported Request.");
 }
 
-char *serve_resource(const char *path)
+std::string serve_resource(std::string path)
 {
-    if (strcmp(path, "/") == 0)
+    if (path == "/")
         path = "/index.html";
 
-    if (strlen(path) > 100)
+    if (path.length() > 100)
     {
         return bad_request("Path size too large.");
     }
 
-    if (strstr(path, ".."))
+    if (path.find("..") != std::string::npos)
     {
         return bad_request("Path navigation not permitted.");
     }
 
     char full_path[PATH_SIZE];
-    snprintf(full_path, PATH_SIZE, "%s%s", BASE_PATH, path);
+    snprintf(full_path, PATH_SIZE, "%s%s", BASE_PATH, path.c_str());
 
 #if defined(_WIN32)
-    char *p = full_path;
+    std::string p = full_path;
     while (*p)
     {
         if (*p == '/')
@@ -72,8 +71,8 @@ char *serve_resource(const char *path)
     if (-1 == (content_length = read_file_contents(file_buffer, full_path)))
         return not_found("Could not locate resource.");
 
-    const char *content_type = get_content_type(full_path);
-    char *response = ok(content_type, content_length, file_buffer);
+    std::string content_type = get_content_type(full_path);
+    std::string response = ok(content_type, content_length, file_buffer);
 
     return response;
 }
