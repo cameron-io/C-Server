@@ -5,44 +5,7 @@
 #define BASE_PATH "public"
 #define PATH_SIZE 128
 
-namespace
-{
-    std::string ServeResource(std::string path)
-    {
-        if (path == "/")
-            path = "/index.html";
-
-        if (path.length() > 100)
-        {
-            return ResponseData::BadRequest("Path size too large.");
-        }
-
-        if (path.find("..") != std::string::npos)
-        {
-            return ResponseData::BadRequest("Path navigation not permitted.");
-        }
-        std::string fullPath = BASE_PATH + path;
-
-#if defined(_WIN32)
-        std::string p = fullPath;
-        while (*p)
-        {
-            if (*p == '/')
-                *p = '\\';
-            ++p;
-        }
-#endif
-        char fileBuffer[BSIZE];
-        int contentLength;
-        if (-1 == (contentLength = ResponseData::ReadFileContents(fileBuffer, fullPath)))
-            return ResponseData::NotFound("Could not locate resource.");
-
-        std::string contentType = RequestParser::ParseContentType(fullPath);
-        std::string response = ResponseData::OK(contentType, contentLength, fileBuffer);
-
-        return response;
-    }
-}
+static std::string ServeResource(std::string path);
 
 std::string RequestHandler::Handle(std::string req)
 {
@@ -73,4 +36,40 @@ std::string RequestHandler::Handle(std::string req)
         return ResponseData::NoContent();
     }
     return ResponseData::BadRequest("Unsupported Request.");
+}
+
+static std::string ServeResource(std::string path)
+{
+    if (path == "/")
+        path = "/index.html";
+
+    if (path.length() > 100)
+    {
+        return ResponseData::BadRequest("Path size too large.");
+    }
+
+    if (path.find("..") != std::string::npos)
+    {
+        return ResponseData::BadRequest("Path navigation not permitted.");
+    }
+    std::string fullPath = BASE_PATH + path;
+
+#if defined(_WIN32)
+    std::string p = fullPath;
+    while (*p)
+    {
+        if (*p == '/')
+            *p = '\\';
+        ++p;
+    }
+#endif
+    char fileBuffer[BSIZE];
+    int contentLength;
+    if (-1 == (contentLength = ResponseData::ReadFileContents(fileBuffer, fullPath)))
+        return ResponseData::NotFound("Could not locate resource.");
+
+    std::string contentType = RequestParser::ParseContentType(fullPath);
+    std::string response = ResponseData::OK(contentType, contentLength, fileBuffer);
+
+    return response;
 }
