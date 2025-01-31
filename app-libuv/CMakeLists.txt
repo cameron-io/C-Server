@@ -1,6 +1,3 @@
-include_directories(${CServer_SOURCE_DIR}/lib/include)
-link_directories(${CServer_SOURCE_DIR}/lib/src)
-
 FetchContent_Declare(
   libuv
   GIT_REPOSITORY https://github.com/libuv/libuv.git
@@ -8,10 +5,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(libuv)
 
-add_executable(HttpServer src/Program.cc)
+add_executable(HttpServer
+    src/Program.cc)
 target_link_libraries(HttpServer
     libuv::libuv
     TcpLib)
 target_include_directories(HttpServer 
     PRIVATE
-        ${CServer_SOURCE_DIR}/app-libuv/include)
+        ${CServer_SOURCE_DIR}/app-libuv/include
+        ${CServer_SOURCE_DIR}/lib/include)
