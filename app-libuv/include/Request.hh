@@ -2,7 +2,7 @@
 
 #include <uv.h>
 #include <stdlib.h>
-#include "req_data.hh"
+#include "RequestData.hh"
 #include "RequestHandler.hh"
 
 // Callback for when the TCP write is complete
