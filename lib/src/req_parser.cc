@@ -2,38 +2,38 @@
 
 std::string RequestParser::ParseContentType(std::string path)
 {
-    size_t last_dot_index = path.rfind('.');
-    if (last_dot_index != std::string::npos)
+    size_t lastDotIndex = path.rfind('.');
+    if (lastDotIndex != std::string::npos)
     {
-        std::string last_dot = path.substr(last_dot_index, path.length() - last_dot_index);
+        std::string lastDot = path.substr(lastDotIndex, path.length() - lastDotIndex);
 
-        if (last_dot == ".css")
+        if (lastDot == ".css")
             return "text/css";
-        if (last_dot == ".csv")
+        if (lastDot == ".csv")
             return "text/csv";
-        if (last_dot == ".gif")
+        if (lastDot == ".gif")
             return "image/gif";
-        if (last_dot == ".htm")
+        if (lastDot == ".htm")
             return "text/html";
-        if (last_dot == ".html")
+        if (lastDot == ".html")
             return "text/html";
-        if (last_dot == ".ico")
+        if (lastDot == ".ico")
             return "image/x-icon";
-        if (last_dot == ".jpeg")
+        if (lastDot == ".jpeg")
             return "image/jpeg";
-        if (last_dot == ".jpg")
+        if (lastDot == ".jpg")
             return "image/jpeg";
-        if (last_dot == ".js")
+        if (lastDot == ".js")
             return "application/javascript";
-        if (last_dot == ".json")
+        if (lastDot == ".json")
             return "application/json";
-        if (last_dot == ".png")
+        if (lastDot == ".png")
             return "image/png";
-        if (last_dot == ".pdf")
+        if (lastDot == ".pdf")
             return "application/pdf";
-        if (last_dot == ".svg")
+        if (lastDot == ".svg")
             return "image/svg+xml";
-        if (last_dot == ".txt")
+        if (lastDot == ".txt")
             return "text/plain";
     }
 

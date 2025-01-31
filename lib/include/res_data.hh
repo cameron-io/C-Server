@@ -7,13 +7,13 @@
 namespace ResponseData
 {
     std::string SetHeaders(
-        std::string status_code,
-        std::string content_type,
-        unsigned int content_length);
+        std::string statusCode,
+        std::string contentType,
+        unsigned int contentLength);
 
     std::string OK(
-        std::string content_type,
-        int content_length,
+        std::string contentType,
+        int contentLength,
         std::string data);
 
     std::string NoContent();
@@ -24,5 +24,5 @@ namespace ResponseData
 
     int ReadFileContents(
         char *destination,
-        std::string full_path);
+        std::string fullPath);
 }

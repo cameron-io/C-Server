@@ -4,11 +4,11 @@
 #include "res_data.hh"
 
 std::string ResponseData::OK(
-    std::string content_type,
-    int content_length,
+    std::string contentType,
+    int contentLength,
     std::string data)
 {
-    std::string headers = SetHeaders("200 OK", content_type, (unsigned int)content_length);
+    std::string headers = SetHeaders("200 OK", contentType, (unsigned int)contentLength);
     return headers + data;
 }
 
@@ -32,14 +32,14 @@ std::string ResponseData::NotFound(std::string data)
 
 int ResponseData::ReadFileContents(
     char *buffer,
-    std::string full_path)
+    std::string fullPath)
 {
-    FILE *fp = fopen(full_path.c_str(), "rb");
+    FILE *fp = fopen(fullPath.c_str(), "rb");
     if (!fp)
         return -1;
 
     fseek(fp, 0L, SEEK_END);
-    size_t content_length = ftell(fp);
+    size_t contentLength = ftell(fp);
     rewind(fp);
 
     int r = fread(buffer, 1, BSIZE, fp);
@@ -49,31 +49,28 @@ int ResponseData::ReadFileContents(
     }
     fclose(fp);
 
-    return content_length;
+    return contentLength;
 }
 
 std::string ResponseData::SetHeaders(
-    std::string status_code,
-    std::string content_type,
-    unsigned int content_length)
+    std::string statusCode,
+    std::string contentType,
+    unsigned int contentLength)
 {
-    const char *headers =
-        "HTTP/1.1 %s\r\n"
-        "Content-Length: %u\r\n"
-        "Content-Type: %s\r\n"
-        "Connection: close\r\n"
-        // Default CORS-Headers
+    std::string cors_headers =
         "Access-Control-Allow-Origin: *\r\n"
         "Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS\r\n"
         "Access-Control-Allow-Headers: *\r\n"
         "Access-Control-Allow-Credentials: true\r\n"
-        "Access-Control-Max-Age: 86400\r\n"
+        "Access-Control-Max-Age: 86400\r\n";
+
+    std::string buffer =
+        "HTTP/1.1 " + statusCode + "\r\n" +
+        "Content-Length: " + std::to_string(contentLength) + "\r\n" +
+        "Content-Type: " + contentType + "\r\n" +
+        "Connection: close\r\n" +
+        cors_headers +
         "\r\n";
 
-    char *buffer = (char *)malloc(BSIZE);
-    snprintf(buffer, BSIZE, headers,
-             status_code.c_str(),
-             content_length,
-             content_type.c_str());
     return buffer;
 }
