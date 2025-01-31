@@ -1,5 +1,5 @@
 #include <string.h>
-#include "req_parser.h"
+#include "req_parser.hh"
 
 const char *get_content_type(const char *path)
 {
@@ -50,4 +50,5 @@ const char *parse_method(char *req)
         return "DELETE";
     else if (strncmp(req, "OPTIONS", 7) == 0)
         return "OPTIONS";
+    return NULL;
 }

@@ -1,7 +1,8 @@
+#include <stdio.h>
 #include <string.h>
-#include "req_parser.h"
-#include "req_handler.h"
-#include "res_content.h"
+#include "req_parser.hh"
+#include "req_handler.hh"
+#include "res_content.hh"
 
 #define BASE_PATH "public"
 #define PATH_SIZE 128
@@ -67,11 +68,12 @@ char *serve_resource(const char *path)
     }
 #endif
     char file_buffer[BSIZE];
-    if (read_file_contents(file_buffer, full_path))
+    int content_length;
+    if (-1 == (content_length = read_file_contents(file_buffer, full_path)))
         return not_found("Could not locate resource.");
 
     const char *content_type = get_content_type(full_path);
-    char *response = ok(content_type, file_buffer);
+    char *response = ok(content_type, content_length, file_buffer);
 
     return response;
 }

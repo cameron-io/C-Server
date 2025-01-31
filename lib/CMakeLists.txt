@@ -1,8 +1,8 @@
 include_directories(${CServer_SOURCE_DIR}/lib/include)
 
 add_library(TcpLib SHARED
-    src/req_parser.c
-    src/req_handler.c
-    src/res_content.c
+    src/req_parser.cc
+    src/req_handler.cc
+    src/res_content.cc
 )
 set_target_properties(TcpLib PROPERTIES LINKER_LANGUAGE CXX)

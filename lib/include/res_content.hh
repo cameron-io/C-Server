@@ -10,6 +10,7 @@ char *set_headers(
 
 char *ok(
     const char *content_type,
+    int content_length,
     const char *data);
 
 char *no_content();

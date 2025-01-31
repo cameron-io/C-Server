@@ -2,13 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
-#include "res_content.h"
+#include "res_content.hh"
 
 char *ok(
     const char *content_type,
+    int content_length,
     const char *data)
 {
-    char *headers = set_headers("200 OK", content_type, strlen(data));
+    char *headers = set_headers("200 OK", content_type, (unsigned int)content_length);
     return strcat(headers, data);
 }
 
@@ -37,7 +38,7 @@ int read_file_contents(
 {
     FILE *fp = fopen(full_path, "rb");
     if (!fp)
-        return 1;
+        return -1;
 
     fseek(fp, 0L, SEEK_END);
     size_t content_length = ftell(fp);
@@ -50,7 +51,7 @@ int read_file_contents(
     }
     fclose(fp);
 
-    return 0;
+    return content_length;
 }
 
 char *set_headers(

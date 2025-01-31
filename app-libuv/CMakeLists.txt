@@ -8,10 +8,10 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(libuv)
 
-add_executable(HttpServer src/main.c)
+add_executable(HttpServer src/main.cc)
 target_link_libraries(HttpServer
     libuv::libuv
     TcpLib)
 target_include_directories(HttpServer 
     PRIVATE
-        ${CServer_SOURCE_DIR}/app/include)
+        ${CServer_SOURCE_DIR}/app-libuv/include)
