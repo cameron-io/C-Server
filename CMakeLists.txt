@@ -37,5 +37,5 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${FullOutputDir}/static_lib")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${FullOutputDir}/lib")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${FullOutputDir}/bin")
 
-add_subdirectory(app-libuv)
+add_subdirectory(app)
 add_subdirectory(lib)
