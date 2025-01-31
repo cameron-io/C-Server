@@ -6,7 +6,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(libuv)
 
 add_executable(HttpServer
-    src/Program.cc)
+    src/Program.cpp)
 target_link_libraries(HttpServer
     libuv::libuv
     TcpLib)

@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Connection.hh"
+#include "Connection.hpp"
 
 #define DEFAULT_PORT 8080
 #define BACKLOG 128

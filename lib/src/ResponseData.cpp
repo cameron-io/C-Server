@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
-#include "ResponseData.hh"
+#include "ResponseData.hpp"
 
 std::string ResponseData::OK(
     std::string contentType,

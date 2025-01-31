@@ -1,4 +1,4 @@
-#include "RequestParser.hh"
+#include "RequestParser.hpp"
 
 std::string RequestParser::ParseContentType(std::string path)
 {

@@ -2,8 +2,8 @@
 
 #include <uv.h>
 #include <stdlib.h>
-#include "RequestData.hh"
-#include "RequestHandler.hh"
+#include "RequestData.hpp"
+#include "RequestHandler.hpp"
 
 // Callback for when the TCP write is complete
 static void on_write_end_cb(uv_write_t *req, int status)

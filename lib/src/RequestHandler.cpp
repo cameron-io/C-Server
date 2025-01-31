@@ -1,6 +1,6 @@
-#include "RequestParser.hh"
-#include "RequestHandler.hh"
-#include "ResponseData.hh"
+#include "RequestParser.hpp"
+#include "RequestHandler.hpp"
+#include "ResponseData.hpp"
 
 #define BASE_PATH "public"
 #define PATH_SIZE 128
