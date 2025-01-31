@@ -1,36 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
-#include "res_content.hh"
+#include "res_data.hh"
 
-std::string ok(
+std::string ResponseData::OK(
     std::string content_type,
     int content_length,
     std::string data)
 {
-    std::string headers = set_headers("200 OK", content_type, (unsigned int)content_length);
+    std::string headers = SetHeaders("200 OK", content_type, (unsigned int)content_length);
     return headers + data;
 }
 
-std::string no_content()
+std::string ResponseData::NoContent()
 {
-    std::string buffer = set_headers("204 No Content", "text/plain", 0);
+    std::string buffer = SetHeaders("204 No Content", "text/plain", 0);
     return buffer;
 }
 
-std::string bad_request(std::string data)
+std::string ResponseData::BadRequest(std::string data)
 {
-    std::string headers = set_headers("400 Bad Request", "text/plain", data.length());
+    std::string headers = SetHeaders("400 Bad Request", "text/plain", data.length());
     return headers + data;
 }
 
-std::string not_found(std::string data)
+std::string ResponseData::NotFound(std::string data)
 {
-    std::string headers = set_headers("404 Not Found", "text/plain", data.length());
+    std::string headers = SetHeaders("404 Not Found", "text/plain", data.length());
     return headers + data;
 }
 
-int read_file_contents(
+int ResponseData::ReadFileContents(
     char *buffer,
     std::string full_path)
 {
@@ -52,7 +52,7 @@ int read_file_contents(
     return content_length;
 }
 
-std::string set_headers(
+std::string ResponseData::SetHeaders(
     std::string status_code,
     std::string content_type,
     unsigned int content_length)

@@ -2,4 +2,7 @@
 
 #include <string>
 
-std::string handle_request(std::string req);
+namespace RequestHandler
+{
+    std::string Handle(std::string req);
+}

@@ -1,6 +1,6 @@
 #include "req_parser.hh"
 
-std::string get_content_type(std::string path)
+std::string RequestParser::ParseContentType(std::string path)
 {
     size_t last_dot_index = path.rfind('.');
     if (last_dot_index != std::string::npos)
@@ -40,7 +40,7 @@ std::string get_content_type(std::string path)
     return "application/octet-stream";
 }
 
-std::string parse_method(std::string req)
+std::string RequestParser::ParseMethod(std::string req)
 {
     std::string method;
     if (req.substr(0, 3) == "GET")

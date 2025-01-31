@@ -2,6 +2,9 @@
 
 #include <string>
 
-std::string get_content_type(std::string path);
+namespace RequestParser
+{
+    std::string ParseContentType(std::string path);
 
-std::string parse_method(std::string req);
+    std::string ParseMethod(std::string req);
+}

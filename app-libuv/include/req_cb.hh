@@ -32,5 +32,5 @@ static void process_command_cb(uv_work_t *req)
     req_data *r;
     r = (req_data *)req->data;
     // Do the actual time-consuming request processing here
-    r->response = strdup(handle_request(r->text).c_str());
+    r->response = strdup(RequestHandler::Handle(r->text).c_str());
 }
